@@ -25,4 +25,6 @@ collector = FilteredElementCollector(doc)
 
 elemList = collector.WherePasses(filter).WhereElementIsNotElementType().ToElements()
 for i in range(elemList.Count):
-	print(i,elemList[i].Id.IntegerValue)
+	if not elemList[i].Category is None:
+		print(elemList[i].Category.Name)
+		
