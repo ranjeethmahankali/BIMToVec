@@ -26,5 +26,8 @@ collector = FilteredElementCollector(doc)
 elemList = collector.WherePasses(filter).WhereElementIsNotElementType().ToElements()
 for i in range(elemList.Count):
 	if not elemList[i].Category is None:
-		print(elemList[i].Category.Name)
-		
+        matList = elemList[i].GetMaterialIds(False)
+        matNames = []
+        for mat in matList:
+            matNames.append(doc.GetElement(mat).Name)
+		print(elemList[i].Category.Name, matNames)
