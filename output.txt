@@ -1,0 +1,128 @@
+Structural Foundations; M: Concrete
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Structural Foundations; M: Concrete
+Structural Foundations; M: Concrete
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Structural Foundations; M: Concrete
+Floors; M: Soil,Miscellaneous,Stone
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Walls; M: Concrete,Paint
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Structural Foundations; M: Concrete
+Structural Foundations; M: Concrete
+-------------
+Structural Foundations; M: Concrete
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Structural Foundations; M: Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Structural Foundations; M: Concrete
+Floors; M: Soil,Miscellaneous,Stone
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Structural Foundations; M: Concrete
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Structural Foundations; M: Concrete
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Structural Foundations; M: Concrete
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Structural Foundations; M: Concrete
+Structural Foundations; M: Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Structural Foundations; M: Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Structural Foundations; M: Concrete
+Floors; M: Soil,Miscellaneous,Stone
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Structural Foundations; M: Concrete
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Structural Foundations; M: Concrete
+Structural Foundations; M: Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Structural Foundations; M: Concrete
+Structural Foundations; M: Concrete
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Structural Foundations; M: Concrete
+Floors; M: Soil,Miscellaneous,Stone
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Structural Foundations; M: Concrete
+Structural Foundations; M: Concrete
+-------------
+Structural Foundations; M: Concrete
+Structural Foundations; M: Concrete
+-------------
+Structural Foundations; M: Concrete
+Structural Foundations; M: Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Structural Foundations; M: Concrete
+Floors; M: Soil,Miscellaneous,Stone
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Structural Foundations; M: Concrete
+Structural Foundations; M: Concrete
+-------------
+Structural Foundations; M: Concrete
+Structural Foundations; M: Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Walls; M: Concrete,Paint
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Structural Foundations; M: Concrete
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Structural Foundations; M: Concrete
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Structural Foundations; M: Concrete
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Structural Foundations; M: Concrete
+Floors; M: Soil,Miscellaneous,Stone
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Structural Foundations; M: Concrete
+Structural Foundations; M: Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Structural Foundations; M: Concrete
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Structural Foundations; M: Concrete
+Floors; M: Soil,Ceramic,Concrete
+-------------
+Structural Foundations; M: Concrete
+Structural Foundations; M: Concrete
+-------------
+Walls; M: Brick,Concrete,Paint
+Walls; M: Concrete,Paint
+-------------
