@@ -17,16 +17,17 @@ app = __revit__.Application
 doc = __revit__.ActiveUIDocument.Document
 
 #main code starts
-#make sure 3d view is active
+#make sure 3d view is active and the section box is turned on
+#or else it won't know where to look
 bigbox = doc.ActiveView.GetSectionBox()
 minPt = bigbox.Min
 maxPt = bigbox.Max
 
-size = 1
+size = 2
 path = 'output.txt'
 f = open(path, 'w')
 f.truncate()
-for i in range(1000):
+for i in range(10000):
 	pt1 = XYZ(random.uniform(minPt.X,maxPt.X),
 				random.uniform(minPt.Y,maxPt.Y),
 				random.uniform(minPt.Z,maxPt.Z))
@@ -58,6 +59,8 @@ for i in range(1000):
 		for mat in matList:
 			matNames.append(doc.GetElement(mat).MaterialCategory)
 		f.write(elemList[i].Category.Name+"; M: "+",".join(matNames)+"\n")
+		#f.write(type(elemList[i]).__name__+"; M: "+",".join(matNames)+"\n")
+		#print(elemList[i].Category.Name+"; M: "+",".join(matNames)+"\n")
 	f.write('-------------\n')
 f.close()
 
