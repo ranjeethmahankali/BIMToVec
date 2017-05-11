@@ -1,2 +1,2 @@
 # BIMToVec
-embeddings for BIM elements
+Embeddings for BIM elements

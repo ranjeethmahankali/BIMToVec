@@ -8,6 +8,7 @@ be the reason for feet.
 import clr
 import math
 import random
+import sys
  
 clr.AddReference('RevitAPI')
 clr.AddReference('RevitAPIUI')
@@ -23,11 +24,13 @@ bigbox = doc.ActiveView.GetSectionBox()
 minPt = bigbox.Min
 maxPt = bigbox.Max
 
+matsToSkip = ["Miscellaneous","Unassigned", "Generic"]
+
 size = 2
 path = 'output.txt'
 f = open(path, 'w')
 f.truncate()
-for i in range(10000):
+for _ in range(10000):
 	pt1 = XYZ(random.uniform(minPt.X,maxPt.X),
 				random.uniform(minPt.Y,maxPt.Y),
 				random.uniform(minPt.Z,maxPt.Z))
@@ -57,11 +60,12 @@ for i in range(10000):
 		matList = elemList[i].GetMaterialIds(False)
 		matNames = []
 		for mat in matList:
-			matNames.append(doc.GetElement(mat).MaterialCategory)
+			materialCategory = doc.GetElement(mat).MaterialCategory
+			if materialCategory in matsToSkip:continue
+			matNames.append(materialCategory)
 		f.write(elemList[i].Category.Name+"; M: "+",".join(matNames)+"\n")
-		#f.write(type(elemList[i]).__name__+"; M: "+",".join(matNames)+"\n")
-		#print(elemList[i].Category.Name+"; M: "+",".join(matNames)+"\n")
 	f.write('-------------\n')
+	#sys.stdout.write("Sample# %s\r"%i)
 f.close()
 
 """
