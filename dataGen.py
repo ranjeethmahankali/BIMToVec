@@ -15,11 +15,44 @@ clr.AddReference('RevitAPI')
 clr.AddReference('RevitAPIUI')
 from Autodesk.Revit.DB import *
 
+# returns an cube shaped outline object
+def GetOutlineAt(center, size):
+	hdiag = XYZ(size/2, size/2, size/2)
+	pt1 = center.Subtract(hdiag)
+	pt2 = center.Add(hdiag)
+
+	return Outline(pt1, pt2)
 # random coin toss - returns true or false
 # can specify the probability of true if you want uneven odds
 def coinToss(trueProb = 0.5):
 	rand = random.random()
 	return rand < trueProb
+
+# takes an Outline object and adds the corresponding box geometry to the document as a generic model
+def AddBoxToDoc(box):
+	size = box.MaximumPoint.Z -box.MinimumPoint.Z
+
+	pt1 = box.MinimumPoint
+	pt2 = pt1.Add(XYZ(0,size,0))
+	pt3 = pt1.Add(XYZ(size,size,0))
+	pt4 = pt1.Add(XYZ(size,0,0))
+
+	l1 = Line.CreateBound(pt1, pt2)
+	l2 = Line.CreateBound(pt2, pt3)
+	l3 = Line.CreateBound(pt3, pt4)
+	l4 = Line.CreateBound(pt4, pt1)
+
+	loop = CurveLoop.Create([l1,l2,l3,l4])
+
+	box = GeometryCreationUtilities.CreateExtrusionGeometry([loop], XYZ(0,0,1), size)
+
+	t = Transaction(doc, "adding stuff")
+	t.Start()
+	ds = DirectShape.CreateElement(doc, ElementId(BuiltInCategory.OST_GenericModel))
+	ds.ApplicationId = "app id"
+	ds.ApplicationDataId = "obj id"
+	ds.SetShape([box])
+	t.Commit()
 
 # instances of this class will contain the data collected in one window
 class elementSet:
@@ -86,14 +119,23 @@ def GetMaterials(element):
 
 # returns a small box (randomly) of given size from inside the container box
 def GetBox(container, size):
-	minPt = container.Min
-	maxPt = container.Max
+	minPt = container.Transform.OfPoint(container.Min)
+	maxPt = container.Transform.OfPoint(container.Max)
+
+	randX = random.random()
+	randY = random.random()
+	randZ = random.random()
+
+	if randX > 0.5 or randY > 0.5 or randZ > 0.5: print(randX, randY, randZ)
 
 	center = XYZ(
-		random.uniform(minPt.X + (size/2), maxPt.X - (size/2)),
-		random.uniform(minPt.Y + (size/2), maxPt.Y - (size/2)),
-		random.uniform(minPt.Z + (size/2), maxPt.Z - (size/2))
+		randX*(minPt.X) + (1-randX)*maxPt.X,
+		randY*(minPt.Y) + (1-randY)*maxPt.Y,
+		randZ*(minPt.Z) + (1-randZ)*maxPt.Z
 	)
+
+	# ratio = (center.X - minPt.X)/(maxPt.X - minPt.X)
+	# print(ratio)
 
 	# center = XYZ(
 	# 	random.uniform(minPt.X + (size/2), maxPt.X - (size/2)),
@@ -101,10 +143,9 @@ def GetBox(container, size):
 	# 	random.uniform(maxPt.Z - 7, maxPt.Z)
 	# )
 
-	halfDiagonal = XYZ(size/2,size/2,size/2)
-	pt1 = center.Subtract(halfDiagonal)
-	pt2 = center.Add(halfDiagonal)
-	return Outline(pt1, pt2)
+	box = GetOutlineAt(center, size)
+	AddBoxToDoc(box) # this is for debugging reasons
+	return box
 # writes the variable to the given path
 def writeToFile(data, path):
 	with open(path, 'wb') as writer:
@@ -132,6 +173,7 @@ def GenerateData(cycleNum):
 	f_text.truncate()
 	for _ in range(cycleNum):
 		window = GetBox(bigbox, WINDOW_SIZE)
+		#AddBoxToDoc(window)
 		elemList = GetCollector(window, doc).ToElements()
 		elemNameSet = set()
 		materialDict = dict()
@@ -146,7 +188,7 @@ def GenerateData(cycleNum):
 			materialDict[elemList[i].Category.Name] = matNames
 			#print("here")
 			elemBatch = elementSet(elemNameSet, materialDict)
-			batch = elemBatch.GeneratePairs(10)
+			batch = elemBatch.GeneratePairs(2)
 			labels += batch[0]
 			targets += batch[1]
 
@@ -155,14 +197,16 @@ def GenerateData(cycleNum):
 
 	return [labels, targets]
 
+
 # Generating the data
-labels, targets = GenerateData(10)
+labels, targets = GenerateData(1000)
 allWords = set()
 allWords = allWords.union(set(labels))
+
 allWords = allWords.union(set(targets))
 # printing the generated pairs for debugging reasons
-for i in range(len(labels)):
-	print("%03d - %s - %s"%(i, labels[i], targets[i]))
+# for i in range(len(labels)):
+# 	print("%03d - %s - %s"%(i, labels[i], targets[i]))
 
 # now pickling the data on the disk to the predefined path
 writeToFile([labels, targets], dataPath)
