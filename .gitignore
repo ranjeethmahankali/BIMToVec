@@ -1,2 +1,4 @@
 *.rvt
 *.rfa
+data/
+data/*
