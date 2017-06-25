@@ -1,0 +1,9 @@
+Walls; M: Brick,Paint,Concrete
+-------------
+Walls; M: Brick,Paint,Concrete
+-------------
+Walls; M: Brick,Paint,Concrete
+Furniture; M: Fabric,Wood
+-------------
+Walls; M: Brick,Paint,Concrete
+-------------

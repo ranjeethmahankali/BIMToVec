@@ -9,85 +9,163 @@ import clr
 import math
 import random
 import sys
+import pickle
  
 clr.AddReference('RevitAPI')
 clr.AddReference('RevitAPIUI')
 from Autodesk.Revit.DB import *
 
-app = __revit__.Application
-doc = __revit__.ActiveUIDocument.Document
+# random coin toss - returns true or false
+# can specify the probability of true if you want uneven odds
+def coinToss(trueProb = 0.5):
+	rand = random.random()
+	return rand < trueProb
 
-#main code starts
-#make sure 3d view is active and the section box is turned on
-#or else it won't know where to look
-bigbox = doc.ActiveView.GetSectionBox()
-minPt = bigbox.Min
-maxPt = bigbox.Max
+# instances of this class will contain the data collected in one window
+class elementSet:
+	# constructor
+	def __init__(self, elementNames, materialDictionary):
+		self.elements = elementNames
+		# this is a dictionary where the keys are the element names and
+		# values are sets containing the material names associated with that element
+		self.matDict = materialDictionary
+	# generate pairs of vocabulary from the set
+	def GeneratePairs(self,num):
+		labels = list()
+		targets = list()
+		# populate these lists now
+		i = 0
+		while i < num:
+			pair = None
+			if coinToss() and len(self.elements) > 1:
+				pair = random.sample(self.elements, 2)
+				i += 1
+			else:
+				randElem = random.sample(self.elements, 1)[0]
+				if len(self.matDict[randElem]) < 1:
+					i += 1
+					continue
+				else:
+					matName = random.sample(self.matDict[randElem], 1)[0]
+					pair = [randElem, matName] if coinToss() else [matName, randElem]
+					i += 1
+			
+			labels.append(pair[0])
+			targets.append(pair[1])
 
-matsToSkip = ["Miscellaneous","Unassigned", "Generic"]
+		return [labels, targets]
 
-size = 2
-path = 'output.txt'
-f = open(path, 'w')
-f.truncate()
-for _ in range(10000):
-	pt1 = XYZ(random.uniform(minPt.X,maxPt.X),
-				random.uniform(minPt.Y,maxPt.Y),
-				random.uniform(minPt.Z,maxPt.Z))
-	diagonal = XYZ(size,size,size)
-	pt2 = pt1.Add(diagonal)
-	box = Outline(pt1, pt2)
-	
+#This applies all the needed filters and returns an element collector for the document
+# the collector will only collec the elements that intersect with the box
+def GetCollector(box, doc):
 	filter = BoundingBoxIntersectsFilter(box)
 	notCamFilter = ElementCategoryFilter(BuiltInCategory.OST_Cameras, True)
 	notSketchFilter = ElementClassFilter(Sketch, True)
 	notTopoFilter = ElementCategoryFilter(BuiltInCategory.OST_Topography,True)
 	notLines = ElementClassFilter(CurveElement, True)
-	
+
 	collector = FilteredElementCollector(doc)
 	
 	collector = collector.WherePasses(filter).WherePasses(notCamFilter).WherePasses(notSketchFilter)
 	collector = collector.WherePasses(notTopoFilter).WherePasses(notLines)
 	collector = collector.WhereElementIsNotElementType().WhereElementIsViewIndependent()
-	elemList = collector.ToElements()
+
+	return collector
+
+#this takes a revit element and returns the material category names associated with that element
+def GetMaterials(element):
+	matsToSkip = ["Miscellaneous","Unassigned", "Generic"]
+	matList = element.GetMaterialIds(False)
+	matNames = set()
+	for mat in matList:
+		materialCategory = doc.GetElement(mat).MaterialCategory
+		if materialCategory in matsToSkip:continue
+		matNames.add(materialCategory)
 	
-	if elemList.Count < 2:continue
-	#print(elemList.Count)
-	for i in range(elemList.Count):
-		if elemList[i].Category.Name == "<Sketch>":
-			print(elemList[i])
-		#if not elemList[i].Category is None
-		matList = elemList[i].GetMaterialIds(False)
-		matNames = []
-		for mat in matList:
-			materialCategory = doc.GetElement(mat).MaterialCategory
-			if materialCategory in matsToSkip:continue
-			matNames.append(materialCategory)
-		f.write(elemList[i].Category.Name+"; M: "+",".join(matNames)+"\n")
-	f.write('-------------\n')
-	#sys.stdout.write("Sample# %s\r"%i)
-f.close()
+	return matNames
 
-"""
-pt1 = XYZ(0,0,0)
-pt2 = XYZ(0,size,0)
-pt3 = XYZ(size,size,0)
-pt4 = XYZ(size,0,0)
+# returns a small box (randomly) of given size from inside the container box
+def GetBox(container, size):
+	minPt = container.Min
+	maxPt = container.Max
 
-l1 = Line.CreateBound(pt1, pt2)
-l2 = Line.CreateBound(pt2, pt3)
-l3 = Line.CreateBound(pt3, pt4)
-l4 = Line.CreateBound(pt4, pt1)
+	center = XYZ(
+		random.uniform(minPt.X + (size/2), maxPt.X - (size/2)),
+		random.uniform(minPt.Y + (size/2), maxPt.Y - (size/2)),
+		random.uniform(minPt.Z + (size/2), maxPt.Z - (size/2))
+	)
 
-loop = CurveLoop.Create([l1,l2,l3,l4])
+	# center = XYZ(
+	# 	random.uniform(minPt.X + (size/2), maxPt.X - (size/2)),
+	# 	random.uniform(minPt.Y + (size/2), maxPt.Y - (size/2)),
+	# 	random.uniform(maxPt.Z - 7, maxPt.Z)
+	# )
 
-box = GeometryCreationUtilities.CreateExtrusionGeometry([loop], XYZ(0,0,1), 25)
+	halfDiagonal = XYZ(size/2,size/2,size/2)
+	pt1 = center.Subtract(halfDiagonal)
+	pt2 = center.Add(halfDiagonal)
+	return Outline(pt1, pt2)
+# writes the variable to the given path
+def writeToFile(data, path):
+	with open(path, 'wb') as writer:
+		pickle.dump(data, writer, pickle.HIGHEST_PROTOCOL)
 
-t = Transaction(doc, "adding stuff")
-t.Start()
-ds = DirectShape.CreateElement(doc, ElementId(BuiltInCategory.OST_GenericModel))
-ds.ApplicationId = "app id"
-ds.ApplicationDataId = "obj id"
-ds.SetShape([box])
-t.Commit()
-"""
+# global variables
+app = __revit__.Application
+doc = __revit__.ActiveUIDocument.Document
+
+#make sure 3d view is active and the section box is turned on
+#or else it won't know where to look
+bigbox = doc.ActiveView.GetSectionBox()
+print(bigbox.Max.Z - bigbox.Min.Z)
+
+
+WINDOW_SIZE = 2 # this is in feet. trying to use a 2ft cube as a capture window
+textPath = '../data/DataAsText.txt' # the text version of dataset will be saved to this file
+dataPath = "../data/%02d.pkl" % 0
+wordsFile = "../data/wordList.pkl"
+
+def GenerateData(cycleNum):
+	labels = []
+	targets = []
+	f_text = open(textPath, 'w')
+	f_text.truncate()
+	for _ in range(cycleNum):
+		window = GetBox(bigbox, WINDOW_SIZE)
+		elemList = GetCollector(window, doc).ToElements()
+		elemNameSet = set()
+		materialDict = dict()
+		if elemList.Count < 1:
+			# print("slipping - %s" % elemList.Count)
+			continue #too few elements collected
+		for i in range(elemList.Count):
+			matNames = GetMaterials(elemList[i])
+			f_text.write(elemList[i].Category.Name+"; M: "+",".join(matNames)+"\n")
+			
+			elemNameSet.add(elemList[i].Category.Name)
+			materialDict[elemList[i].Category.Name] = matNames
+			#print("here")
+			elemBatch = elementSet(elemNameSet, materialDict)
+			batch = elemBatch.GeneratePairs(10)
+			labels += batch[0]
+			targets += batch[1]
+
+		f_text.write('-------------\n')
+	f_text.close()
+
+	return [labels, targets]
+
+# Generating the data
+labels, targets = GenerateData(10)
+allWords = set()
+allWords = allWords.union(set(labels))
+allWords = allWords.union(set(targets))
+# printing the generated pairs for debugging reasons
+for i in range(len(labels)):
+	print("%03d - %s - %s"%(i, labels[i], targets[i]))
+
+# now pickling the data on the disk to the predefined path
+writeToFile([labels, targets], dataPath)
+writeToFile(allWords, wordsFile)
+
+print(len(allWords))
