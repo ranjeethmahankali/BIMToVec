@@ -1,6 +1,17 @@
+*.py
 *.rvt
 *.rfa
 
 *.pkl
+
 data/
 data/*
+
+__pycache__/
+__pycache__/*
+
+train_log/
+train_log/*
+
+savedModels/
+savedModels/*
