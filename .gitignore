@@ -2,5 +2,5 @@
 *.rfa
 
 *.pkl
-./data
-./data/*.pkl
+data/
+data/*
