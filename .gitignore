@@ -1,4 +1,6 @@
 *.rvt
 *.rfa
-data/
-data/*
+
+*.pkl
+./data
+./data/*.pkl
