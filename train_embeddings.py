@@ -32,7 +32,7 @@ def process_batch(batch):
 words_dataset = dataset("data/")
 # training
 steps = 1000000
-logStep = 10000
+logStep = 50000
 with tf.Session() as sess:
     tf.global_variables_initializer().run()
     for i in range(steps):
@@ -59,7 +59,7 @@ with tf.Session() as sess:
             saver = tf.train.Saver()
             saver.save(sess, LOG_DIR+"model.ckpt")
             
-        if(i % (5*logStep) == 0):
+        # if i % 50000 == 0:
             # plotting using t-SNE
             final_embeddings = normalized_embeddings.eval()
             two_d_embeddings = tsne.fit_transform(final_embeddings)
