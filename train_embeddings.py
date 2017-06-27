@@ -2,6 +2,20 @@ from model_embeddings import *
 from sklearn.manifold import TSNE
 from matplotlib import pylab
 
+# instance of a tsne thing
+tsne = TSNE(perplexity=30.0, n_components=2, init="pca", n_iter=5000)
+
+# this displays a scatter plot of the embeddings
+def plot(embeddings, WORDS):
+    assert embeddings.shape[0] >= len(WORDS)
+    pylab.figure(figsize=(15,15)) # 15 inches
+    for i,label in enumerate(WORDS):
+        x, y = embeddings[i,:]
+        pylab.scatter(x,y)
+        pylab.annotate(label,xy=[x,y],xytext=(5,2),textcoords='offset points',ha='right',va='bottom')
+    
+    pylab.show()
+
 # converts from strings to numbers
 def process_batch(batch):
     labels = []
@@ -44,21 +58,9 @@ with tf.Session() as sess:
             print("------------------------------------------")
             saver = tf.train.Saver()
             saver.save(sess, LOG_DIR+"model.ckpt")
-    
-    final_embeddings = normalized_embeddings.eval()
-
-# plotting using t-SNE
-tsne = TSNE(perplexity=30.0, n_components=2, init="pca", n_iter=5000)
-two_d_embeddings = tsne.fit_transform(final_embeddings)
-
-def plot(embeddings, labels):
-    assert embeddings.shape[0] >= len(labels)
-    pylab.figure(figsize=(15,15)) # 15 inches
-    for i,label in enumerate(labels):
-        x, y = embeddings[i,:]
-        pylab.scatter(x,y)
-        pylab.annotate(label,xy=[x,y],xytext=(5,2),textcoords='offset points',ha='right',va='bottom')
-    
-    pylab.show()
-
-plot(two_d_embeddings, WORDS)
+            
+        if(i % (5*logStep) == 0):
+            # plotting using t-SNE
+            final_embeddings = normalized_embeddings.eval()
+            two_d_embeddings = tsne.fit_transform(final_embeddings)
+            plot(two_d_embeddings, WORDS)
