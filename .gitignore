@@ -1,5 +1,7 @@
 *.rvt
 *.rfa
+*.dll
+*.exe
 
 *.pkl
 
