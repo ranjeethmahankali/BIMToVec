@@ -2,8 +2,10 @@
 *.rfa
 *.dll
 *.exe
+*.ifc
 
 *.pkl
+*.cache
 
 data/
 data/*
@@ -16,3 +18,12 @@ train_log/*
 
 savedModels/
 savedModels/*
+
+BIMToVecSampler/BIMToVecSampler/bin/
+BIMToVecSampler/BIMToVecSampler/bin/*
+
+XbimDemo/
+XbimDemo/*
+
+BIMToVecSampler/packages/
+BIMToVecSampler/BIMToVecSampler/obj/
