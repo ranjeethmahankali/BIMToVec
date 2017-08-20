@@ -8,7 +8,6 @@ using Xbim.Ifc2x3.Kernel;
 using System.Collections.Generic;
 
 using Xbim.Common.Geometry;
-using Xbim.Common.Logging;
 
 using BIMToVecSampler.Utils;
 
@@ -22,7 +21,6 @@ namespace BIMToVecSampler.Samplers
         #endregion
 
         #region-fields
-        private static readonly ILogger log = LoggerFactory.GetLogger();
         private Dictionary<int, XbimRect3D> _bboxBuffer;
         private Dictionary<int, string> _labelDict;
         private XbimRect3D _boundingBox;
@@ -48,13 +46,8 @@ namespace BIMToVecSampler.Samplers
         #endregion
 
         #region-constructors
-        public SpatialTreeSampler(string ifcPath):base(ifcPath)
+        public SpatialTreeSampler(string ifcPath, string dataPath):base(ifcPath, dataPath)
         {
-            if (!File.Exists(ifcPath))
-            {
-                throw new FileNotFoundException("The specified IFC file could not be found");
-            }
-
             _bboxBuffer = new Dictionary<int, XbimRect3D>();
             _labelDict = new Dictionary<int, string>();
 
@@ -107,7 +100,11 @@ namespace BIMToVecSampler.Samplers
             log.Info(message);
         }
 
-        public override void BuildCollections() { BuildCollectionsFromTree(); }
+        public override void BuildCollections()
+        {
+            Collections.Clear();
+            BuildCollectionsFromTree();
+        }
 
         private void BuildCollectionsFromTree(XbimOctree<int> tree = null)
         {
