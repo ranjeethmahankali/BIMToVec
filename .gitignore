@@ -26,4 +26,6 @@ XbimDemo/
 XbimDemo/*
 
 BIMToVecSampler/packages/
+BIMToVecSampler/.vs
 BIMToVecSampler/BIMToVecSampler/obj/
+dataGen/BIMToVecSampler/

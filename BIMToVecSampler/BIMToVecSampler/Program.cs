@@ -33,19 +33,28 @@ namespace BIMToVecSampler
                     args[i] = Path.Combine(Application.StartupPath, args[i]);
                 }
             }
+            //getting the paths from the arguments
             string path = args[0];
-            string datasetPath = args[1];
+            Sampler.DatasetPath = args[1];
+            Sampler.ClearDataset();
 
+            //getting the files in the directory and looping through them
             string[] files = Directory.GetFiles(path);
             for (int i = 0; i < files.Length; i++)
             {
-                SpatialTreeSampler spatial = new SpatialTreeSampler(files[i], datasetPath);
-                SemanticTreeSampler semantic = new SemanticTreeSampler(files[i], datasetPath);
-                spatial.ExportDatasetAsText(i == 0);//if i == 0 we clean up the dataset folder
-                semantic.ExportDatasetAsText();
+                log.InfoFormat("========== Processing the file {0} =============", Path.GetFileName(files[i]));
+                Sampler sampler;
+
+                sampler = new SpatialTreeSampler(files[i]);
+                sampler.ExportDataset(false);
+
+                sampler = new SemanticTreeSampler(files[i]);
+                sampler.ExportDataset();
+                Console.WriteLine("");
             }
 
-            Console.Write("Press any key to continue...");
+            Sampler.ExportGlobalVocabulary();
+            Console.Write("Finished. Press any key to continue...");
             Console.ReadKey();
         }
     }

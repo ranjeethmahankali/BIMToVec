@@ -46,44 +46,42 @@ namespace BIMToVecSampler.Samplers
         #endregion
 
         #region-constructors
-        public SpatialTreeSampler(string ifcPath, string dataPath):base(ifcPath, dataPath)
-        {
-            _bboxBuffer = new Dictionary<int, XbimRect3D>();
-            _labelDict = new Dictionary<int, string>();
-
-            _boundingBox = XbimRect3D.Empty;
-            using (var model = IfcStore.Open(_ifcFilePath))
-            {
-                var context = new Xbim3DModelContext(model);
-                context.CreateContext();
-                List<IfcProduct> prods = model.Instances.OfType<IfcProduct>().ToList();
-                foreach (var prod in prods)
-                {
-                    List<XbimShapeInstance> prodShapes = context.ShapeInstancesOf(prod).Where(p => p.RepresentationType
-                    != XbimGeometryRepresentationType.OpeningsAndAdditionsExcluded).Distinct().ToList();
-
-                    if (prodShapes == null || prodShapes.Count == 0) { continue; }
-                    XbimRect3D bbox = XbimRect3D.Empty;
-                    foreach (var shape in prodShapes)
-                    {
-                        if (bbox.IsEmpty) { bbox = shape.BoundingBox; }
-                        else { bbox.Union(shape.BoundingBox); }
-                    }
-
-                    _bboxBuffer.Add(prod.EntityLabel, bbox);
-                    _labelDict.Add(prod.EntityLabel, prod.GetType().Name);
-
-                    if (_boundingBox.IsEmpty) { _boundingBox = bbox; }
-                    else { _boundingBox.Union(bbox); }
-                }
-            }
-
-            log.InfoFormat("{0} Objects loaded from the file.", _bboxBuffer.Count);
-            ProcessTree();
-        }
+        public SpatialTreeSampler(string ifcPath):base(ifcPath) { }
         #endregion
 
         #region-methods
+        private void LoadObjectBuffer(IfcStore model)
+        {
+            _bboxBuffer = new Dictionary<int, XbimRect3D>();
+            _labelDict = new Dictionary<int, string>();
+            _boundingBox = XbimRect3D.Empty;
+
+            var context = new Xbim3DModelContext(model);
+            context.CreateContext();
+            List<IfcProduct> prods = model.Instances.OfType<IfcProduct>().ToList();
+            foreach (var prod in prods)
+            {
+                List<XbimShapeInstance> prodShapes = context.ShapeInstancesOf(prod).Where(p => p.RepresentationType
+                != XbimGeometryRepresentationType.OpeningsAndAdditionsExcluded).Distinct().ToList();
+
+                if (prodShapes == null || prodShapes.Count == 0) { continue; }
+                XbimRect3D bbox = XbimRect3D.Empty;
+                foreach (var shape in prodShapes)
+                {
+                    if (bbox.IsEmpty) { bbox = shape.BoundingBox; }
+                    else { bbox.Union(shape.BoundingBox); }
+                }
+
+                _bboxBuffer.Add(prod.EntityLabel, bbox);
+                _labelDict.Add(prod.EntityLabel, prod.GetType().Name);
+
+                if (_boundingBox.IsEmpty) { _boundingBox = bbox; }
+                else { _boundingBox.Union(bbox); }
+            }
+
+            log.InfoFormat("{0} Objects loaded from the file.", _bboxBuffer.Count);
+        }
+
         private void ProcessTree()
         {
             double maxSize = MathUtil.Max(_boundingBox.SizeX,
@@ -95,14 +93,15 @@ namespace BIMToVecSampler.Samplers
 
             XbimRect3D treeBox = _tree.ContentBounds();
 
-            string message = MathUtil.BBoxEqual(treeBox, _boundingBox) ? "Tree was successfully populated":
-                "Tree bounds do not match the boundingbox of the model !";
-            log.Info(message);
+            if(MathUtil.BBoxEqual(treeBox, _boundingBox)) { log.Info("Tree was successfully populated"); }
+            else { log.Error("Tree bounds do not match the boundingbox of the model !"); }
         }
 
-        public override void BuildCollections()
+        public override void BuildCollections(IfcStore model)
         {
             Collections.Clear();
+            LoadObjectBuffer(model);
+            ProcessTree();
             BuildCollectionsFromTree();
         }
 

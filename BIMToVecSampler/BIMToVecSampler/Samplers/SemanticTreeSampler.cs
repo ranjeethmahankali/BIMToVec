@@ -19,10 +19,7 @@ namespace BIMToVecSampler.Samplers
         #endregion
 
         #region-constructors
-        public SemanticTreeSampler(string ifcPath, string dataPath):base(ifcPath, dataPath)
-        {
-            log.Info("Ifc file is loaded into the semantic sampler.");
-        }
+        public SemanticTreeSampler(string ifcPath):base(ifcPath) { }
         #endregion
 
         #region-methods
@@ -67,14 +64,11 @@ namespace BIMToVecSampler.Samplers
             Collections.Add(collection);
         }
 
-        public override void BuildCollections()
+        public override void BuildCollections(IfcStore model)
         {
             Collections.Clear();
-            using (var model = IfcStore.Open(_ifcFilePath))
-            {
-                var project = model.Instances.OfType<IfcProject>().FirstOrDefault();
-                UnpackChildren(project);
-            }
+            var project = model.Instances.OfType<IfcProject>().FirstOrDefault();
+            UnpackChildren(project);
         }
         #endregion
     }
