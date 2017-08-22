@@ -135,21 +135,18 @@ def estimate_time(startTime, totalCycles, finishedCycles):
 # testing purposes
 class dataset:
     # the dirPath is the path of the directory
-    # testFile is the name of the file with the test examples
-    def __init__(self, dirPath = './', testFile='test'):
+    def __init__(self, dirPath = './'):
         self.dirPath = dirPath
-        self.testFileName = testFile + '.pkl'
         # getting the list of files in the dirPath
         self.trainFileList = os.listdir(self.dirPath)
-        # removing the test data file from the list of training data files
+        # removing the vocab file from the list
         if len(self.trainFileList) > 1:
-            self.trainFileList.remove(self.testFileName)
-            self.trainFileList.remove("wordList.pkl")
+            self.trainFileList.remove("vocabulary.dat")
 
-        #removing any other file than pickled data files from the list
+        #removing any other file with the wrong extension
         i = 0
         while i < len(self.trainFileList):
-            if not self.trainFileList[i].endswith('.pkl'):
+            if not self.trainFileList[i].endswith('.dat'):
                 # print('removing %s'%self.trainFileList[i])
                 del self.trainFileList[i]
                 i -= 1
@@ -162,16 +159,13 @@ class dataset:
         if len(self.trainFileList) > 0:
             self.curFile = self.trainFileList[0]
         self.data = None
-        self.test_data = None
         self.load_data()
 
         # this is the number of data samples currently loaded
         self.data_num = self.data[0].shape[0]
-        self.test_data_num = self.test_data[0].shape[0]
 
         # this is the counter for where we are reading the data in the currently loaded set
         self.c = 0
-        self.tc = 0
     
     # returns the name of the next file to be used once the current file is exhausted
     def next_file(self):
@@ -182,44 +176,43 @@ class dataset:
     
     # this loads the data from the current file into the self.data
     def load_data(self, silent = False):
-        with open(self.dirPath + self.curFile,'rb') as inp:
-            if not silent: print('\nLoading data from %s...'%self.curFile)
-            dSet = pickle.load(inp)
+        with open(self.dirPath + self.curFile) as inp:
+            if not silent: print('Loading data from %s...'%self.curFile)
+            lines = inp.read().splitlines()
+        
+        labels = []
+        targets = []
+        for line in lines:
+            if line == "": continue
+            label, target = line.split(" ")
+            labels.append(label)
+            targets.append(target)
+        dSet = [labels, targets]
         
         # self.data = [np.expand_dims(np.array(dSet[0]),3), np.array(dSet[1])]
         # print(type(dSet).__name__)
         self.data = [np.array(dSet[0]), np.array(dSet[1])]
+        self.data_num = self.data[0].shape[0]
         # self.data = dSet
-        
-        if self.test_data is None:
-            with open(self.dirPath + self.testFileName,'rb') as inp:
-                if not silent: print('\nLoading test data from %s...'%self.testFileName)
-                dSet = pickle.load(inp)
-            
-            # self.test_data = [np.expand_dims(np.array(dSet[0]),3), np.array(dSet[1])]
-            self.test_data = [np.array(dSet[0]), np.array(dSet[1])]
-            # self.test_data = dSet
-        if not silent: print('\nDataset in %s is successfully loaded\n'%self.dirPath)
+        # if not silent: print('Dataset in %s is successfully loaded'%self.dirPath)
     
     # this returns the next batch of the size - size
     def next_batch(self, size):
         if self.c + size >= self.data_num:
             end = self.data_num
-            dataNeeded = size-(end-self.c)
+            dataNeeded = self.c + size - self.data_num
 
             batch1 = [self.data[0][self.c: end], self.data[1][self.c: end]]
 
             # now getting the remaining data from the next file
-            end = (self.c + size)%self.data_num
             self.c = 0
             self.curFile = self.next_file()
-            self.load_data(silent = True)
+            # self.load_data(silent = True)
+            self.load_data()
 
-            batch2 = [self.data[0][self.c: end], self.data[1][self.c: end]]
+            batch2 = self.next_batch(dataNeeded)
             # now joining batch 2 to the original batch
             batch = [np.concatenate((batch1[0], batch2[0]), axis=0), np.concatenate((batch1[1], batch2[1]), axis=0)]
-
-            self.c = end
 
         elif self.c + size < self.data_num:
             end = self.c + size
@@ -227,31 +220,6 @@ class dataset:
             batch = [self.data[0][self.c: end], self.data[1][self.c: end]]
             self.c = end
 
-        return batch
-    
-    # this fetches a test batch
-    def test_batch(self, size):
-        if self.tc + size >= self.test_data_num:
-            end = self.test_data_num
-            dataNeeded = size-(end-self.tc)
-
-            batch1 = [self.test_data[0][self.tc: end], self.test_data[1][self.tc: end]]
-
-            end = (self.tc + size)%self.test_data_num
-            self.tc = 0
-
-            batch2 = [self.test_data[0][self.tc: end], self.test_data[1][self.tc: end]]
-            # now joining batch 2 to the original batch
-            batch = [np.concatenate((batch1[0], batch2[0]), axis=0), np.concatenate((batch1[1], batch2[1]), axis=0)]
-
-            self.tc = end
-
-        elif self.tc + size < self.test_data_num:
-            end = self.tc + size
-            
-            batch = [self.test_data[0][self.tc: end], self.test_data[1][self.tc: end]]
-            self.tc = end
-        
         return batch
 
 # this just saves any given data to any given path

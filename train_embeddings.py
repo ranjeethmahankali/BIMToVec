@@ -1,9 +1,15 @@
 from model_embeddings import *
 from sklearn.manifold import TSNE
 from matplotlib import pylab
+import sys
 
 # instance of a tsne thing
 tsne = TSNE(perplexity=30.0, n_components=2, init="pca", n_iter=5000)
+
+# progressBar as a string of # signs
+def progressBar(counter, size):
+    if(counter > size): return ""
+    return (counter*"#")+((size-counter)*" ")
 
 # this displays a scatter plot of the embeddings
 def plot(embeddings, WORDS):
@@ -25,22 +31,27 @@ def process_batch(batch):
     
     for w in batch[1]:
         targets.append(wordToNum[w])
-
+    
     return [np.expand_dims(labels,0), np.expand_dims(targets, 1)]
 
 # loading the dataset
 words_dataset = dataset("data/")
 # training
-steps = 1000000
+steps = 1600000
 logStep = 50000
 with tf.Session() as sess:
     tf.global_variables_initializer().run()
     for i in range(steps):
         batch_labels, batch_targets = process_batch(words_dataset.next_batch(batch_size))
+        # print(words_dataset.curFile, words_dataset.c, batch_labels.shape, batch_targets.shape)
         _, lossVal = sess.run([optim, loss], feed_dict={
             train_labels: batch_labels,
             train_targets: batch_targets
         })
+
+        # now printing progress
+        pBarLen = 20
+        sys.stdout.write("|%s| - Training(%s/%s)\r"%(progressBar((i//200)%pBarLen, pBarLen),i,steps))
 
         if i % logStep == 0:
             print("Loss: %s" % lossVal)
@@ -62,5 +73,13 @@ with tf.Session() as sess:
         # if i % 50000 == 0:
             # plotting using t-SNE
             final_embeddings = normalized_embeddings.eval()
-            two_d_embeddings = tsne.fit_transform(final_embeddings)
-            plot(two_d_embeddings, WORDS)
+            # two_d_embeddings = tsne.fit_transform(final_embeddings)
+            # plot(two_d_embeddings, WORDS)
+
+            writeToFile(final_embeddings, "savedEmbeddings/embeddings.pkl")
+        
+    final_embeddings = normalized_embeddings.eval()
+    two_d_embeddings = tsne.fit_transform(final_embeddings)
+    plot(two_d_embeddings, WORDS)
+
+    writeToFile(final_embeddings, "savedEmbeddings/embeddings.pkl")

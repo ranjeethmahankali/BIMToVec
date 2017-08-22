@@ -4,8 +4,8 @@ import math
 from tensorflow.contrib.tensorboard.plugins import projector
 
 def getAllWords():
-    with open('data/wordList.pkl','rb') as f:
-        words = pickle.load(f)
+    with open('data/vocabulary.dat') as f:
+        words = f.read().splitlines()
     wordList = list(words)
     wordDict = dict()
     for i in range(len(words)):
