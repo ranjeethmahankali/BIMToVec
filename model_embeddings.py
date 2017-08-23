@@ -12,6 +12,12 @@ def getAllWords():
         wordDict[wordList[i]] = i 
     return [wordList, wordDict]
 
+def saveWordsAsMetadata():
+    with open(LOG_DIR+"metadata.tsv", "w") as file:
+        file.write("Words")
+        for word in WORDS:
+            file.write("%s\n"%word)
+
 # constants
 LOG_DIR = "train_log/"
 WORDS, wordToNum = getAllWords()
@@ -64,13 +70,9 @@ similarity = tf.matmul(valid_embeddings, tf.transpose(normalized_embeddings))
 #   tensor_name: 'word_embedding'
 #   metadata_path: '$LOG_DIR/metadata.tsv'
 # }
-embedding_var = tf.Variable(tf.random_normal([VOCAB_SIZE,EMBEDDING_SIZE]), name='word_embedding')
 config = projector.ProjectorConfig()
 embedding = config.embeddings.add()
-embedding.tensor_name = embedding_var.name
-embedding.metadata_path = LOG_DIR + 'metadata.tsv'
-summary_writer = tf.summary.FileWriter(LOG_DIR)
-projector.visualize_embeddings(summary_writer, config)
+embedding.tensor_name = embeddings.name
 
 """
 Loss: 18.4618

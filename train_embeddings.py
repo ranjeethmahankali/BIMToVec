@@ -2,6 +2,7 @@ from model_embeddings import *
 from sklearn.manifold import TSNE
 from matplotlib import pylab
 import sys
+import shutil
 
 # instance of a tsne thing
 tsne = TSNE(perplexity=30.0, n_components=2, init="pca", n_iter=5000)
@@ -41,6 +42,13 @@ steps = 1600000
 logStep = 50000
 with tf.Session() as sess:
     tf.global_variables_initializer().run()
+    shutil.rmtree(LOG_DIR, ignore_errors=True)
+    summary_writer = tf.summary.FileWriter(LOG_DIR)
+    saveWordsAsMetadata()
+    embedding.metadata_path = LOG_DIR + 'metadata.tsv'
+    projector.visualize_embeddings(summary_writer, config)
+
+    startTime = time.time()
     for i in range(steps):
         batch_labels, batch_targets = process_batch(words_dataset.next_batch(batch_size))
         # print(words_dataset.curFile, words_dataset.c, batch_labels.shape, batch_targets.shape)
@@ -51,7 +59,8 @@ with tf.Session() as sess:
 
         # now printing progress
         pBarLen = 20
-        sys.stdout.write("|%s| - Training(%s/%s)\r"%(progressBar((i//200)%pBarLen, pBarLen),i,steps))
+        sys.stdout.write("|%s| - Training(%s/%s)-%s\r"%(progressBar((i//200)%pBarLen, pBarLen),i,steps,
+            estimate_time(startTime, i, steps)))
 
         if i % logStep == 0:
             print("Loss: %s" % lossVal)
@@ -68,7 +77,7 @@ with tf.Session() as sess:
                 print(msg)
             print("------------------------------------------")
             saver = tf.train.Saver()
-            saver.save(sess, LOG_DIR+"model.ckpt")
+            saver.save(sess, LOG_DIR+"model.ckpt", i)
             
         # if i % 50000 == 0:
             # plotting using t-SNE
