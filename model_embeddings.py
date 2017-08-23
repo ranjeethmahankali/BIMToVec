@@ -14,9 +14,9 @@ def getAllWords():
 
 def saveWordsAsMetadata():
     with open(LOG_DIR+"metadata.tsv", "w") as file:
-        file.write("Words")
+        file.write("Words\tIndex\n")
         for word in WORDS:
-            file.write("%s\n"%word)
+            file.write("%s\t%s\n"%(word, WORDS.index(word)))
 
 # constants
 LOG_DIR = "train_log/"

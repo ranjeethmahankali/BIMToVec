@@ -38,14 +38,14 @@ def process_batch(batch):
 # loading the dataset
 words_dataset = dataset("data/")
 # training
-steps = 1600000
+steps = 16000000
 logStep = 50000
 with tf.Session() as sess:
     tf.global_variables_initializer().run()
     shutil.rmtree(LOG_DIR, ignore_errors=True)
     summary_writer = tf.summary.FileWriter(LOG_DIR)
     saveWordsAsMetadata()
-    embedding.metadata_path = LOG_DIR + 'metadata.tsv'
+    embedding.metadata_path = 'metadata.tsv'
     projector.visualize_embeddings(summary_writer, config)
 
     startTime = time.time()
