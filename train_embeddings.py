@@ -33,12 +33,12 @@ def process_batch(batch):
     for w in batch[1]:
         targets.append(wordToNum[w])
     
-    return [np.expand_dims(labels,0), np.expand_dims(targets, 1)]
+    return [labels, np.expand_dims(targets, 1)]
 
 # loading the dataset
 words_dataset = dataset("data/")
 # training
-steps = 16000000
+steps = 3500000
 logStep = 50000
 with tf.Session() as sess:
     tf.global_variables_initializer().run()
@@ -60,7 +60,7 @@ with tf.Session() as sess:
         # now printing progress
         pBarLen = 20
         sys.stdout.write("|%s| - Training(%s/%s)-%s\r"%(progressBar((i//200)%pBarLen, pBarLen),i,steps,
-            estimate_time(startTime, i, steps)))
+            estimate_time(startTime, steps, i)))
 
         if i % logStep == 0:
             print("Loss: %s" % lossVal)
@@ -72,12 +72,12 @@ with tf.Session() as sess:
                 msg = "%s: "% word
                 for k in range(top_k):
                     close_word = WORDS[nearest[k]]
-                    if k > 0: msg += ", "
-                    msg += close_word
+                    if k > 0: msg += ", "#"\t"
+                    msg += close_word #+ ": %.08f\n"%sim[i,k]
                 print(msg)
             print("------------------------------------------")
             saver = tf.train.Saver()
-            saver.save(sess, LOG_DIR+"model.ckpt", i)
+            saver.save(sess, LOG_DIR+"model.ckpt")
             
         # if i % 50000 == 0:
             # plotting using t-SNE

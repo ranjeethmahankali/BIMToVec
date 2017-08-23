@@ -19,7 +19,6 @@ def saveWordsAsMetadata():
             file.write("%s\t%s\n"%(word, WORDS.index(word)))
 
 # constants
-LOG_DIR = "train_log/"
 WORDS, wordToNum = getAllWords()
 VOCAB_SIZE = len(WORDS)
 EMBEDDING_SIZE = 128
@@ -43,7 +42,7 @@ with tf.variable_scope("vars"):
     )
 
 # Placeholders
-train_labels = tf.placeholder(tf.int32, [1,batch_size])
+train_labels = tf.placeholder(tf.int32, [batch_size])
 train_targets = tf.placeholder(tf.int32, [batch_size, 1])
 valid_dataset = tf.constant(valid_set, dtype = tf.int32)
 
@@ -52,13 +51,13 @@ embed = tf.nn.embedding_lookup(embeddings, train_labels)
 loss = tf.reduce_mean(tf.nn.sampled_softmax_loss(
     weights = softmax_weights,
     biases = softmax_biases,
-    inputs = tf.cast(train_labels,tf.float32),
+    inputs = embed,
     labels = tf.cast(train_targets, tf.float32),
     num_sampled = VOCAB_SIZE//2,
     num_classes = VOCAB_SIZE,
 ))
 
-optim = tf.train.AdagradOptimizer(0.2).minimize(loss)
+optim = tf.train.AdagradOptimizer(learning_rate).minimize(loss)
 
 norm = tf.sqrt(tf.reduce_sum(tf.square(embeddings), 1, keep_dims=True))
 normalized_embeddings = embeddings / norm
