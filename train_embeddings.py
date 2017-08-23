@@ -38,8 +38,8 @@ def process_batch(batch):
 # loading the dataset
 words_dataset = dataset("data/")
 # training
-steps = 3500000
-logStep = 50000
+steps = 800000
+logStep = 15000
 with tf.Session() as sess:
     tf.global_variables_initializer().run()
     shutil.rmtree(LOG_DIR, ignore_errors=True)
