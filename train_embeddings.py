@@ -79,13 +79,11 @@ with tf.Session() as sess:
             saver = tf.train.Saver()
             saver.save(sess, LOG_DIR+"model.ckpt")
             
-        # if i % 50000 == 0:
-            # plotting using t-SNE
             final_embeddings = normalized_embeddings.eval()
+            writeToFile(final_embeddings, "savedEmbeddings/embeddings.pkl")
+            # plotting using t-SNE
             # two_d_embeddings = tsne.fit_transform(final_embeddings)
             # plot(two_d_embeddings, WORDS)
-
-            writeToFile(final_embeddings, "savedEmbeddings/embeddings.pkl")
         
     final_embeddings = normalized_embeddings.eval()
     two_d_embeddings = tsne.fit_transform(final_embeddings)
