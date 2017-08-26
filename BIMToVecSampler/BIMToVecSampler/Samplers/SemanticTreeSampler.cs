@@ -23,7 +23,7 @@ namespace BIMToVecSampler.Samplers
         #endregion
 
         #region-methods
-        public void UnpackChildren(IfcObject objIfc)
+        public void SampleChildren(IfcObject objIfc, Action<List<string>> collectionSampler)
         {
             List<IfcRelDecomposes> decomposed = objIfc.IsDecomposedBy.ToList();
             if(decomposed == null || decomposed.Count == 0) { return; }
@@ -36,7 +36,7 @@ namespace BIMToVecSampler.Samplers
                     collection.Add(obj.GetType().Name);
                     if (typeof(IfcSpatialStructureElement).IsAssignableFrom(obj.GetType()))
                     {
-                        UnpackSpatialStructure((IfcSpatialStructureElement)obj);
+                        SampleSpatialStructure((IfcSpatialStructureElement)obj, collectionSampler);
                     }
                     else
                     {
@@ -45,11 +45,11 @@ namespace BIMToVecSampler.Samplers
                 }
             }
 
-            Collections.Add(collection);
+            collectionSampler.Invoke(collection);
         }
-        public void UnpackSpatialStructure(IfcSpatialStructureElement structIfc)
+        public void SampleSpatialStructure(IfcSpatialStructureElement structIfc, Action<List<string>> collectionSampler)
         {
-            UnpackChildren(structIfc);
+            SampleChildren(structIfc, collectionSampler);
             if(structIfc.ContainsElements == null) { return; }
 
             List<string> collection = new List<string> { structIfc.GetType().Name };
@@ -61,13 +61,13 @@ namespace BIMToVecSampler.Samplers
                 }
             }
 
-            Collections.Add(collection);
+            collectionSampler.Invoke(collection);
         }
 
-        public override void BuildCollections(IfcStore model)
+        public override void SampleCollections(IfcStore model, Action<List<string>> collectionSampler)
         {
             var project = model.Instances.OfType<IfcProject>().FirstOrDefault();
-            UnpackChildren(project);
+            SampleChildren(project, collectionSampler);
         }
         #endregion
     }

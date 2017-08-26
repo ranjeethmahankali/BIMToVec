@@ -44,6 +44,11 @@ namespace BIMToVecSampler.Samplers
             _vocab.AddRange(newVocab.Words);
             _vocab = _vocab.Distinct().ToList();
         }
+        public void Add(List<string> words)
+        {
+            _vocab.AddRange(words);
+            _vocab = _vocab.Distinct().ToList();
+        }
 
         public void Export(string targetPath)
         {

@@ -19,6 +19,7 @@ namespace BIMToVecSampler
         private List<Sampler> _samplers = new List<Sampler>();
         private int _maxDataCountPerFile = 35000;
         private Vocabulary _vocabulary = new Vocabulary();
+        private int _count = 0;
         #endregion
 
         #region-properties
@@ -36,6 +37,7 @@ namespace BIMToVecSampler
             get { return _maxDataCountPerFile; }
             set { _maxDataCountPerFile = value; }
         }
+        public int Count { get { return _count; } }
         #endregion
 
         #region-constructors
@@ -56,7 +58,6 @@ namespace BIMToVecSampler
         public void AddSampler(Sampler sampler)
         {
             _samplers.Add(sampler);
-            sampler.Dataset = this;
         }
         public void ExportVocabulary()
         {
@@ -88,7 +89,7 @@ namespace BIMToVecSampler
 
             foreach(var sampler in _samplers)
             {
-                sampler.Collections.Clear();
+                sampler.Vocabulary.Clear();
             }
             log.Info("Cleared the dataset.");
         }
@@ -98,49 +99,52 @@ namespace BIMToVecSampler
             string[] files = Directory.GetFiles(_sourceDir);
             for (int i = 0; i < files.Length; i++)
             {
-                log.InfoFormat("========== Processing the file {0} =============", Path.GetFileName(files[i]));
+                log.InfoFormat("========== Processing file {0} of {1} - {2} =============",
+                    i + 1, files.Length,
+                    Path.GetFileName(files[i]));
+
                 List<KeyValuePair<string, string>> data = new List<KeyValuePair<string, string>>();
+                int fileCounter = 0;
+                int dataCount = 0;
+                string targetPath = GetTargetFilePath(files[i], fileCounter);
+
+                StreamWriter writer = new StreamWriter(targetPath);
+                Action<string> exportDelegate = (dataLine) => {
+                    writer.WriteLine(dataLine);
+                    if (++dataCount % _maxDataCountPerFile == 0)
+                    {
+                        writer.Close();
+                        writer.Dispose();
+                        targetPath = GetTargetFilePath(files[i], ++fileCounter);
+                        writer = new StreamWriter(targetPath);
+                    };
+                };
+
+                //write the data here
                 foreach (var sampler in _samplers)
                 {
-                    sampler.Sample(files[i]);
-                    sampler.BuildData();
-                    data.AddRange(sampler.Data);
+                    sampler.Sample(files[i], exportDelegate);
                     _vocabulary.Merge(sampler.Vocabulary);
                     log.InfoFormat("Updated global vocabulary to {0} words", _vocabulary.Count);
-                    sampler.Clear();//to save memory
+                }
+                if(writer != null)
+                {
+                    writer.Close();
+                    writer.Dispose();
                 }
 
-                PartitionDataAndExport(data, _maxDataCountPerFile, files[i]);
+                _count += dataCount;
+                log.InfoFormat("Saved {0} examples across {1} partitions.", dataCount, fileCounter+1);
             }
             ExportVocabulary();
+            log.InfoFormat("Finished exporting the dataset - {0} examples in total.", Count);
         }
 
-        public void PartitionDataAndExport(List<KeyValuePair<string, string>> _data, int maxCountPerFile,
-            string filePath)
+        public string GetTargetFilePath(string sourceFilePath, int partitionIndex)
         {
-            List<List<KeyValuePair<string, string>>> dataPartitions = SamplerUtil.PartitionList(_data, maxCountPerFile);
-
-            int numPartitions = dataPartitions.Count;
-            bool split = numPartitions > 1;
-            int i = 0;
-            foreach (var partition in dataPartitions)
-            {
-                string targetFileName = Path.GetFileNameWithoutExtension(filePath);
-                targetFileName += string.Format("{0}{1}", split ? "_" + i.ToString() : "", GlobalVariables.DataFileExtension);
-                string targetPath = Path.Combine(_targetDir, targetFileName);
-                using (StreamWriter writer = new StreamWriter(targetPath))
-                {
-                    foreach (KeyValuePair<string, string> pair in partition)
-                    {
-                        writer.WriteLine(string.Format("{0} {1}", pair.Key, pair.Value));
-                    }
-                }
-
-                log.InfoFormat("Saved partition {0} of {1}", i + 1, numPartitions);
-                i++;
-            }
-
-            log.InfoFormat("Finished saving the data.");
+            string targetFileName = Path.GetFileNameWithoutExtension(sourceFilePath) + "_"+partitionIndex.ToString();
+            targetFileName += GlobalVariables.DataFileExtension;
+            return Path.Combine(_targetDir, targetFileName);
         }
         #endregion
     }

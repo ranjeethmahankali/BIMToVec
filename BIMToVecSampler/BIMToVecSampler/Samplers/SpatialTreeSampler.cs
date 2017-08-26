@@ -28,12 +28,6 @@ namespace BIMToVecSampler.Samplers
         #endregion
 
         #region-properties
-        public string IfcFilePath
-        {
-            get { return _ifcFilePath; }
-            set { _ifcFilePath = value; }
-        }
-
         public int ScaleOrder
         {
             get
@@ -97,14 +91,14 @@ namespace BIMToVecSampler.Samplers
             else { log.Error("Tree bounds do not match the boundingbox of the model !"); }
         }
 
-        public override void BuildCollections(IfcStore model)
+        public override void SampleCollections(IfcStore model, Action<List<string>> collectionSampler)
         {
             LoadObjectBuffer(model);
             ProcessTree();
-            BuildCollectionsFromTree();
+            SampleCollectionsFromTree(collectionSampler);
         }
 
-        private void BuildCollectionsFromTree(XbimOctree<int> tree = null)
+        private void SampleCollectionsFromTree(Action<List<string>> collectionSampler, XbimOctree<int> tree = null)
         {
             tree = tree ?? _tree;
             List<string> collection = GetClassNamesFromEntityLabels(tree.Content().ToList());
@@ -114,11 +108,11 @@ namespace BIMToVecSampler.Samplers
                 collection = GetClassNamesFromEntityLabels(tree.Parent.Content().ToList());
             }
 
-            if (collection.Count > 1) { Collections.Add(collection); }
+            if (collection.Count > 1) { collectionSampler.Invoke(collection); }
 
             foreach (XbimOctree<int> subTree in tree.Subtrees)
             {
-                BuildCollectionsFromTree(subTree);
+                SampleCollectionsFromTree(collectionSampler, subTree);
             }
         }
 
