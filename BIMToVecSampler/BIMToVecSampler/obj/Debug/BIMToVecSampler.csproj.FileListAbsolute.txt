@@ -45,5 +45,6 @@ D:\Works\myPrograms\BIMToVec\BIMToVecSampler\BIMToVecSampler\bin\Debug\Xbim.Mode
 D:\Works\myPrograms\BIMToVec\BIMToVecSampler\BIMToVecSampler\bin\Debug\Xbim.ModelGeometry.Scene.xml
 D:\Works\myPrograms\BIMToVec\BIMToVecSampler\BIMToVecSampler\bin\Debug\Xbim.Tessellator.pdb
 D:\Works\myPrograms\BIMToVec\BIMToVecSampler\BIMToVecSampler\bin\Debug\Xbim.Tessellator.xml
+D:\Works\myPrograms\BIMToVec\BIMToVecSampler\BIMToVecSampler\obj\Debug\BIMToVecSampler.csprojResolveAssemblyReference.cache
 D:\Works\myPrograms\BIMToVec\BIMToVecSampler\BIMToVecSampler\obj\Debug\BIMToVecSampler.exe
 D:\Works\myPrograms\BIMToVec\BIMToVecSampler\BIMToVecSampler\obj\Debug\BIMToVecSampler.pdb

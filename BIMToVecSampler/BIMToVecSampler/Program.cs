@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
+using System.Globalization;
 
 using Xbim.Common.Logging;
 using BIMToVecSampler.Samplers;
@@ -16,7 +17,7 @@ namespace BIMToVecSampler
         private static readonly ILogger log = LoggerFactory.GetLogger();
         static void Main(string[] args)
         {
-            if(args.Length != 2)
+            if(args.Length < 2 || args.Length > 3)
             {
                 string p1 = "The directory containing all the ifc files";
                 string p2 = "The directory to which the dataset should be saved";
@@ -25,35 +26,23 @@ namespace BIMToVecSampler
                 Console.ReadKey();
                 return;
             }
-            //checking if the user provided relative or absolute paths and dealing with that appropriately
-            for(int i = 0; i < args.Length; i++)
+            int maxCountPerFile = GlobalVariables.DEFAULT_MAX_COUNT_PERFILE;
+            if (args.Length == 3)
             {
-                if (!Path.IsPathRooted(args[i]))
+                int count;
+                if(int.TryParse(args[2],out count))
                 {
-                    args[i] = Path.Combine(Application.StartupPath, args[i]);
+                    maxCountPerFile = count;
                 }
             }
-            //getting the paths from the arguments
-            string path = args[0];
-            Sampler.DatasetPath = args[1];
-            Sampler.ClearDataset();
 
-            //getting the files in the directory and looping through them
-            string[] files = Directory.GetFiles(path);
-            for (int i = 0; i < files.Length; i++)
-            {
-                log.InfoFormat("========== Processing the file {0} =============", Path.GetFileName(files[i]));
-                Sampler sampler;
+            Dataset dSet = new Dataset(args[0], args[1]);
+            dSet.Clear();
+            dSet.AddSampler(new SpatialTreeSampler());
+            dSet.AddSampler(new SemanticTreeSampler());
+            dSet.MaxDataCountPerFile = maxCountPerFile;
 
-                sampler = new SpatialTreeSampler(files[i]);
-                sampler.ExportDataset(false);
-
-                sampler = new SemanticTreeSampler(files[i]);
-                sampler.ExportDataset();
-                Console.WriteLine("");
-            }
-
-            Sampler.ExportGlobalVocabulary();
+            dSet.ExportData();
             Console.Write("Finished. Press any key to continue...");
             Console.ReadKey();
         }

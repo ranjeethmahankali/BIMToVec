@@ -38,7 +38,7 @@ namespace BIMToVecSampler.Samplers
         {
             get
             {
-                double ratio = MathUtil.Max(_boundingBox.SizeX, 
+                double ratio = SamplerUtil.Max(_boundingBox.SizeX, 
                     _boundingBox.SizeY, _boundingBox.SizeZ)/_smallestCellSize;
                 return (int)Math.Ceiling(Math.Log(ratio)/Math.Log(2));
             }
@@ -46,7 +46,7 @@ namespace BIMToVecSampler.Samplers
         #endregion
 
         #region-constructors
-        public SpatialTreeSampler(string ifcPath):base(ifcPath) { }
+        public SpatialTreeSampler():base() { }
         #endregion
 
         #region-methods
@@ -84,7 +84,7 @@ namespace BIMToVecSampler.Samplers
 
         private void ProcessTree()
         {
-            double maxSize = MathUtil.Max(_boundingBox.SizeX,
+            double maxSize = SamplerUtil.Max(_boundingBox.SizeX,
                     _boundingBox.SizeY, _boundingBox.SizeZ);
             double _looseNess = 1.2;
             _tree = new XbimOctree<int>(maxSize/_looseNess, ScaleOrder, _looseNess, _boundingBox.Centroid());
@@ -93,13 +93,12 @@ namespace BIMToVecSampler.Samplers
 
             XbimRect3D treeBox = _tree.ContentBounds();
 
-            if(MathUtil.BBoxEqual(treeBox, _boundingBox)) { log.Info("Tree was successfully populated"); }
+            if(SamplerUtil.BBoxEqual(treeBox, _boundingBox)) { log.Info("Tree was successfully populated"); }
             else { log.Error("Tree bounds do not match the boundingbox of the model !"); }
         }
 
         public override void BuildCollections(IfcStore model)
         {
-            Collections.Clear();
             LoadObjectBuffer(model);
             ProcessTree();
             BuildCollectionsFromTree();
