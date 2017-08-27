@@ -47,3 +47,4 @@ D:\Works\myPrograms\BIMToVec\BIMToVecSampler\BIMToVecSampler\bin\Debug\Xbim.Tess
 D:\Works\myPrograms\BIMToVec\BIMToVecSampler\BIMToVecSampler\bin\Debug\Xbim.Tessellator.xml
 D:\Works\myPrograms\BIMToVec\BIMToVecSampler\BIMToVecSampler\obj\Debug\BIMToVecSampler.exe
 D:\Works\myPrograms\BIMToVec\BIMToVecSampler\BIMToVecSampler\obj\Debug\BIMToVecSampler.pdb
+D:\Works\myPrograms\BIMToVec\BIMToVecSampler\BIMToVecSampler\obj\Debug\BIMToVecSampler.csprojResolveAssemblyReference.cache

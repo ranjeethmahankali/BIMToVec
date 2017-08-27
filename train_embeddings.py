@@ -23,22 +23,11 @@ def plot(embeddings, WORDS):
     
     pylab.show()
 
-# converts from strings to numbers
-def process_batch(batch):
-    labels = []
-    targets = []
-    for w in batch[0]:
-        labels.append(wordToNum[w])
-    
-    for w in batch[1]:
-        targets.append(wordToNum[w])
-    
-    return [labels, np.expand_dims(targets, 1)]
-
 # loading the dataset
 words_dataset = dataset("data/")
+# dataset size: 668,597,822
 # training
-steps = 1000000
+steps = 3000000
 logStep = 15000
 with tf.Session() as sess:
     tf.global_variables_initializer().run()
@@ -50,11 +39,12 @@ with tf.Session() as sess:
 
     startTime = time.time()
     for i in range(steps):
-        batch_labels, batch_targets = process_batch(words_dataset.next_batch(batch_size))
+        # batch_labels, batch_targets = process_batch(words_dataset.next_batch(batch_size))
         # print(words_dataset.curFile, words_dataset.c, batch_labels.shape, batch_targets.shape)
+        batch = words_dataset.next_batch(batch_size)
         _, lossVal = sess.run([optim, loss], feed_dict={
-            train_labels: batch_labels,
-            train_targets: batch_targets
+            train_labels: batch[0], #batch_labels,
+            train_targets: batch[1]#batch_targets
         })
 
         # now printing progress

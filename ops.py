@@ -14,7 +14,8 @@ resDir = 'results/'
 # folder to log the training progress in
 LOG_DIR = "train_log/"
 
-learning_rate = 1.0
+# learning_rate = 1.0
+learning_rate = 0.0001
 
 model_save_path = ['savedModels/model_1.ckpt',
                     'savedModels/model_2.ckpt']
@@ -185,7 +186,7 @@ class dataset:
         
         # self.data = [np.expand_dims(np.array(dSet[0]),3), np.array(dSet[1])]
         # print(type(dSet).__name__)
-        self.data = [np.array(dSet[0]), np.array(dSet[1])]
+        self.data = [np.array(dSet[0]), np.expand_dims(np.array(dSet[1]),1)]
         self.data_num = self.data[0].shape[0]
         # self.data = dSet
         # if not silent: print('Dataset in %s is successfully loaded'%self.dirPath)

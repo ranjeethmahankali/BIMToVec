@@ -17,6 +17,7 @@ namespace BIMToVecSampler.Samplers
         {
             get { return _vocab; }
         }
+        //private Dictionary<string, int> IndexDictionary
 
         public Vocabulary() { }
         public Vocabulary(List<string> words)
@@ -25,11 +26,21 @@ namespace BIMToVecSampler.Samplers
             _vocab = _vocab.Distinct().ToList();
         }
 
+        public int IndexOf(string word)
+        {
+            int index = _vocab.IndexOf(word);
+            if(index == -1) { throw new ArgumentException("The word cannot be found in the vocabulary !"); }
+            return index;
+        }
         public int Count { get { return _vocab.Count; } }
         public bool IsReadOnly { get { return false; } }
         public void Add(string item)
         {
-            if (!Contains(item)){ _vocab.Add(item); }
+            if (!Contains(item))
+            {
+                _vocab.Add(item);
+
+            }
         }
         public void Clear() { _vocab.Clear(); }
         public bool Contains(string item) { return _vocab.Contains(item); }

@@ -57,7 +57,8 @@ loss = tf.reduce_mean(tf.nn.sampled_softmax_loss(
     num_classes = VOCAB_SIZE,
 ))
 
-optim = tf.train.AdagradOptimizer(learning_rate).minimize(loss)
+# optim = tf.train.AdagradOptimizer(learning_rate).minimize(loss)
+optim = tf.train.AdamOptimizer(learning_rate).minimize(loss)
 
 norm = tf.sqrt(tf.reduce_sum(tf.square(embeddings), 1, keep_dims=True))
 normalized_embeddings = embeddings / norm

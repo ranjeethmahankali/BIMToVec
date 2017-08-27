@@ -19,7 +19,7 @@ namespace BIMToVecSampler
         private List<Sampler> _samplers = new List<Sampler>();
         private int _maxDataCountPerFile = 35000;
         private Vocabulary _vocabulary = new Vocabulary();
-        private int _count = 0;
+        private ulong _count = 0;
         #endregion
 
         #region-properties
@@ -37,7 +37,7 @@ namespace BIMToVecSampler
             get { return _maxDataCountPerFile; }
             set { _maxDataCountPerFile = value; }
         }
-        public int Count { get { return _count; } }
+        public ulong Count { get { return _count; } }
         #endregion
 
         #region-constructors
@@ -86,11 +86,6 @@ namespace BIMToVecSampler
             }
 
             Vocabulary.Clear();
-
-            foreach(var sampler in _samplers)
-            {
-                sampler.Vocabulary.Clear();
-            }
             log.Info("Cleared the dataset.");
         }
 
@@ -105,12 +100,12 @@ namespace BIMToVecSampler
 
                 List<KeyValuePair<string, string>> data = new List<KeyValuePair<string, string>>();
                 int fileCounter = 0;
-                int dataCount = 0;
+                uint dataCount = 0;
                 string targetPath = GetTargetFilePath(files[i], fileCounter);
 
                 StreamWriter writer = new StreamWriter(targetPath);
-                Action<string> exportDelegate = (dataLine) => {
-                    writer.WriteLine(dataLine);
+                Action<string, string> exportDelegate = (label, target) => {
+                    writer.WriteLine(string.Format("{0} {1}", _vocabulary.IndexOf(label), _vocabulary.IndexOf(target)));
                     if (++dataCount % _maxDataCountPerFile == 0)
                     {
                         writer.Close();
@@ -120,12 +115,14 @@ namespace BIMToVecSampler
                     };
                 };
 
+                Action<List<string>> vocabMerger = (words) => {
+                    _vocabulary.Add(words);
+                }; 
+
                 //write the data here
                 foreach (var sampler in _samplers)
                 {
-                    sampler.Sample(files[i], exportDelegate);
-                    _vocabulary.Merge(sampler.Vocabulary);
-                    log.InfoFormat("Updated global vocabulary to {0} words", _vocabulary.Count);
+                    sampler.Sample(files[i], exportDelegate, vocabMerger);
                 }
                 if(writer != null)
                 {
@@ -133,7 +130,8 @@ namespace BIMToVecSampler
                     writer.Dispose();
                 }
 
-                _count += dataCount;
+                _count = _count + dataCount;
+                log.InfoFormat("Vocabulary size: {0} words", _vocabulary.Count);
                 log.InfoFormat("Saved {0} examples across {1} partitions.", dataCount, fileCounter+1);
             }
             ExportVocabulary();
