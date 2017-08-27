@@ -8,7 +8,7 @@ import time
 from PIL import Image
 
 # some global params
-batch_size = 128
+batch_size = 200
 # the directory to which teh results will be saved
 resDir = 'results/'
 # folder to log the training progress in
