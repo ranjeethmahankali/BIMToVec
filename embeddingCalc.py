@@ -2,7 +2,7 @@ from ops import *
 from model_embeddings import getAllWords
 import math
 
-embeddings = loadFromFile("savedEmbeddings/embeddings.pkl")
+embeddings = loadFromFile("savedEmbeddings/embeddings16.pkl")
 WORDS, wordToNum = getAllWords()
 
 
@@ -37,12 +37,14 @@ def toEnglish(embed):
 # extrapolates
 def Extrapolate(A, B, C):    
     # calculate C - A + B
-    return toEnglish(toEmbedding(C) - toEmbedding(A) + toEmbedding(B))
+    diff = normalize(toEmbedding(A) - toEmbedding(B))
+    return toEnglish(normalize(toEmbedding(C) - diff))
 
 # this scores the belong together ness of the given collection of ifc names belong together
 def coherence(words):
     embeds = []
     maxScore = -math.inf
+    minScore = math.inf
     for word in words:
         compat = []
         for word2 in words:
@@ -54,16 +56,24 @@ def coherence(words):
         score = np.matmul(wordEmbed, np.transpose(compat)).mean()
         if score > maxScore:
             maxScore = score
+        if minScore > score:
+            minScore = score
         embeds.append(score)
     
     print("max score: %s"%maxScore)
+    print("min score: %s"%minScore)
     return np.array(embeds).mean()
 
+# A is to B as C is to what ? this function returns the answer for this
+def Extrapolate(A, B, C):
+    return toEnglish(toEmbedding(C) - toEmbedding(A) + toEmbedding(B))
+
 # the main program starts here
-MEAN_COHERENCE = coherence(WORDS)
-print("mean coherence: %s"%MEAN_COHERENCE)
-# print(WORDS[min1], WORDS[min2])
-print(coherence(["IfcWallStandardCase", "IfcGrid"]))
+# MEAN_COHERENCE = coherence(WORDS)
+# print("mean coherence: %s"%MEAN_COHERENCE)
+# # print(WORDS[min1], WORDS[min2])
+# print(coherence(["IfcWallStandardCase", "IfcGrid"]))
 # print(coherence(["IfcWall", "IfcDoor"]))
 
-# print(nearestToWord("IfcWallStandardCase",45))
+print(nearestToWord("IfcSite",5))
+print(Extrapolate("IfcSite", "IfcProject", "IfcBuildingStorey"))

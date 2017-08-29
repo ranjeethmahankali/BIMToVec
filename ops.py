@@ -8,7 +8,7 @@ import time
 from PIL import Image
 
 # some global params
-batch_size = 400
+batch_size = 600
 # the directory to which teh results will be saved
 resDir = 'results/'
 # folder to log the training progress in
@@ -28,7 +28,7 @@ def saveModel(sess, savePath):
     print('Saved the model to %s'%savePath)
 
 # this method loads the saved model
-def loadModel(sess, savedPath):
+def loadModel(sess, savedPath)
     print('\n...loading the models, please wait...')
     saver = tf.train.Saver()
     saver.restore(sess, savedPath)

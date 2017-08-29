@@ -16,8 +16,8 @@ __pycache__/*
 train_log/
 train_log/*
 
-savedModels/
-savedModels/*
+savedEmbeddings/
+savedEmbeddings/*
 
 BIMToVecSampler/BIMToVecSampler/bin/
 BIMToVecSampler/BIMToVecSampler/bin/*

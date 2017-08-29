@@ -21,7 +21,7 @@ def saveWordsAsMetadata():
 # constants
 WORDS, wordToNum = getAllWords()
 VOCAB_SIZE = len(WORDS)
-EMBEDDING_SIZE = 16
+EMBEDDING_SIZE = 4
 valid_set = random.sample(range(VOCAB_SIZE), VOCAB_SIZE//3 if VOCAB_SIZE//3 >= 1 else 1)
 
 # Variables
