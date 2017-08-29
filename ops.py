@@ -8,7 +8,7 @@ import time
 from PIL import Image
 
 # some global params
-batch_size = 200
+batch_size = 400
 # the directory to which teh results will be saved
 resDir = 'results/'
 # folder to log the training progress in
@@ -19,22 +19,6 @@ learning_rate = 0.0001
 
 model_save_path = ['savedModels/model_1.ckpt',
                     'savedModels/model_2.ckpt']
-
-# in every traning example, these will be the names of the 5 spaces
-nameList = ['red',
-            'green',
-            'yellow',
-            'white']
-# calculating the number of possible connections based on the number of spaces.
-con_num = int(len(nameList)*(len(nameList)-1)*0.5)
-# And this dictionary provides the color as RGB tuple for a space with a certian name
-colors = {
-    'red':(255,0,0),
-    'green':(0,255,0),
-    'blue':(0,0,255),
-    'yellow':(255,255,0),
-    'white':(255,255,255)
-}
 
 # this method saves the model
 def saveModel(sess, savePath):
@@ -221,6 +205,10 @@ class dataset:
 def writeToFile(data, path):
     with open(path, 'wb') as output:
         pickle.dump(data, output, pickle.HIGHEST_PROTOCOL)
+    
+def loadFromFile(path):
+    with open(path, "rb") as f:
+        return pickle.load(f)
 
 # this creates summaries for variables to be used by tensorboard
 def summarize(varT):
@@ -245,5 +233,7 @@ def getSummaryWriters(sess):
     test_writer = tf.summary.FileWriter(log_dir + 'test')
 
     return [train_writer, test_writer]
+
+
 # from here down is the sandbox place to check and verify the code above before using it in
 # the other files
