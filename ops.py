@@ -28,7 +28,7 @@ def saveModel(sess, savePath):
     print('Saved the model to %s'%savePath)
 
 # this method loads the saved model
-def loadModel(sess, savedPath)
+def loadModel(sess, savedPath):
     print('\n...loading the models, please wait...')
     saver = tf.train.Saver()
     saver.restore(sess, savedPath)
