@@ -34,7 +34,7 @@ def toEmbedding(word):
 def toEnglish(embed):
     return nearest(embed,1, skipFirst = False)[0]
 
-# extrapolates
+# A is to B as C is to what ? this function returns the answer for this
 def Extrapolate(A, B, C):    
     # calculate C - A + B
     diff = normalize(toEmbedding(A) - toEmbedding(B))
@@ -43,30 +43,16 @@ def Extrapolate(A, B, C):
 # this scores the belong together ness of the given collection of ifc names belong together
 def coherence(words):
     embeds = []
-    maxScore = -math.inf
-    minScore = math.inf
     for word in words:
-        compat = []
-        for word2 in words:
-            if word == word2: continue
-            compat.append(toEmbedding(word2))
-        
-        compat = np.array(compat)
-        wordEmbed = np.array([toEmbedding(word)])
-        score = np.matmul(wordEmbed, np.transpose(compat)).mean()
-        if score > maxScore:
-            maxScore = score
-        if minScore > score:
-            minScore = score
-        embeds.append(score)
+        embeds.append(toEmbedding(word))
     
-    print("max score: %s"%maxScore)
-    print("min score: %s"%minScore)
-    return np.array(embeds).mean()
-
-# A is to B as C is to what ? this function returns the answer for this
-def Extrapolate(A, B, C):
-    return toEnglish(toEmbedding(C) - toEmbedding(A) + toEmbedding(B))
+    embeds = np.array(embeds)
+    cosineDist = np.matmul(embeds, np.trannspose(embeds))
+    flat = np.reshape(cosineDist, [-1, 1])
+    print(flat.shape)
+    for val in flat:
+        if val == 1: continue
+        
 
 # the main program starts here
 # MEAN_COHERENCE = coherence(WORDS)
@@ -75,5 +61,5 @@ def Extrapolate(A, B, C):
 # print(coherence(["IfcWallStandardCase", "IfcGrid"]))
 # print(coherence(["IfcWall", "IfcDoor"]))
 
-print(nearestToWord("IfcSite",5))
-print(Extrapolate("IfcSite", "IfcProject", "IfcBuildingStorey"))
+print(nearestToWord("IfcWall",5))
+print(Extrapolate("IfcWall", "IfcDoor", "IfcReinforcingBar"))

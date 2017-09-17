@@ -135,6 +135,7 @@
   <ItemGroup>
     <Compile Include="Dataset.cs" />
     <Compile Include="GlobalVariables.cs" />
+    <Compile Include="Samplers\MaterialSampler.cs" />
     <Compile Include="Samplers\Sampler.cs" />
     <Compile Include="Samplers\SemanticTreeSampler.cs" />
     <Compile Include="Samplers\SpatialTreeSampler.cs" />

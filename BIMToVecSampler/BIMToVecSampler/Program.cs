@@ -38,6 +38,7 @@ namespace BIMToVecSampler
 
             Dataset dSet = new Dataset(args[0], args[1]);
             dSet.Clear();
+            dSet.AddSampler(new MaterialSampler());
             dSet.AddSampler(new SpatialTreeSampler());
             dSet.AddSampler(new SemanticTreeSampler());
             dSet.MaxDataCountPerFile = maxCountPerFile;

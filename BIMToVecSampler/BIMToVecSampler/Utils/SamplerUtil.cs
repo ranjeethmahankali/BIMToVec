@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 using Xbim.Common.Geometry;
 
 
@@ -21,9 +22,9 @@ namespace BIMToVecSampler.Utils
         public static double Max(params double[] nums)
         {
             double max = double.MinValue;
-            foreach(double num in nums)
+            foreach (double num in nums)
             {
-                if(num > max) { max = num; }
+                if (num > max) { max = num; }
             }
 
             return max;
@@ -45,7 +46,7 @@ namespace BIMToVecSampler.Utils
         }
         public static bool IsValidIfcFile(string filePath)
         {
-            return File.Exists(filePath) && 
+            return File.Exists(filePath) &&
                 Path.ChangeExtension(Path.GetFileName(filePath), GlobalVariables.DataFileExtension) != GlobalVariables.VOCAB_SAVE_FILENAME;
         }
 
@@ -59,14 +60,29 @@ namespace BIMToVecSampler.Utils
         {
             List<List<T>> partitions = new List<List<T>>();
             int i = 0;
-            while(i < list.Count)
+            while (i < list.Count)
             {
-                int offset = Math.Min(maxSize, list.Count-i);
+                int offset = Math.Min(maxSize, list.Count - i);
                 partitions.Add(list.GetRange(i, offset));
                 i += offset;
             }
 
             return partitions;
+        }
+
+        public static string ProcessString(string word)
+        {
+            Regex rgx = new Regex("[^a-z0-9]");
+            string result = rgx.Replace(word.ToLower(), "");
+            return result;
+        }
+
+        public static void ProcessCollection(ref List<string> words)
+        {
+            for(int i = 0; i < words.Count; i++)
+            {
+                words[i] = ProcessString(words[i]);
+            }
         }
     }
 }

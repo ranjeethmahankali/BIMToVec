@@ -22,7 +22,7 @@ namespace BIMToVecSampler.Samplers
 
         #region-fields
         private Dictionary<int, XbimRect3D> _bboxBuffer;
-        private Dictionary<int, string> _labelDict;
+        private Dictionary<int, string> _labelBuffer;
         private XbimRect3D _boundingBox;
         private XbimOctree<int> _tree;
         #endregion
@@ -47,7 +47,7 @@ namespace BIMToVecSampler.Samplers
         private void LoadObjectBuffer(IfcStore model)
         {
             _bboxBuffer = new Dictionary<int, XbimRect3D>();
-            _labelDict = new Dictionary<int, string>();
+            _labelBuffer = new Dictionary<int, string>();
             _boundingBox = XbimRect3D.Empty;
 
             var context = new Xbim3DModelContext(model);
@@ -67,7 +67,7 @@ namespace BIMToVecSampler.Samplers
                 }
 
                 _bboxBuffer.Add(prod.EntityLabel, bbox);
-                _labelDict.Add(prod.EntityLabel, prod.GetType().Name);
+                _labelBuffer.Add(prod.EntityLabel, prod.GetType().Name);
 
                 if (_boundingBox.IsEmpty) { _boundingBox = bbox; }
                 else { _boundingBox.Union(bbox); }
@@ -78,8 +78,7 @@ namespace BIMToVecSampler.Samplers
 
         private void ProcessTree()
         {
-            double maxSize = SamplerUtil.Max(_boundingBox.SizeX,
-                    _boundingBox.SizeY, _boundingBox.SizeZ);
+            double maxSize = SamplerUtil.Max(_boundingBox.SizeX, _boundingBox.SizeY, _boundingBox.SizeZ);
             double _looseNess = 1.2;
             _tree = new XbimOctree<int>(maxSize/_looseNess, ScaleOrder, _looseNess, _boundingBox.Centroid());
 
@@ -101,11 +100,11 @@ namespace BIMToVecSampler.Samplers
         private void SampleCollectionsFromTree(Action<List<string>> collectionSampler, XbimOctree<int> tree = null)
         {
             tree = tree ?? _tree;
-            List<string> collection = GetClassNamesFromEntityLabels(tree.Content().ToList());
+            List<string> collection = BuildCollectionFromEntityLabels(tree.Content().ToList());
 
             if (collection.Count == 1 && tree.Parent != null)
             {
-                collection = GetClassNamesFromEntityLabels(tree.Parent.Content().ToList());
+                collection = BuildCollectionFromEntityLabels(tree.Parent.Content().ToList());
             }
 
             if (collection.Count > 1) { collectionSampler.Invoke(collection); }
@@ -116,14 +115,14 @@ namespace BIMToVecSampler.Samplers
             }
         }
 
-        private List<string> GetClassNamesFromEntityLabels(List<int> labels)
+        private List<string> BuildCollectionFromEntityLabels(List<int> labels)
         {
-            List<string> classNames = new List<string>();
+            List<string> collection = new List<string>();
             foreach (int label in labels)
             {
-                classNames.Add(_labelDict[label]);
+                collection.Add(_labelBuffer[label]);
             }
-            return classNames;
+            return collection;
         }
         #endregion
     }

@@ -26,6 +26,7 @@ namespace BIMToVecSampler.Samplers
         {
             int numCollections = 0;
             Action<List<string>> collectionSampler = (collection) => {
+                SamplerUtil.ProcessCollection(ref collection);
                 vocabMerger.Invoke(collection);//add the collection to the global vocabulary
                 foreach (string label in collection)
                 {

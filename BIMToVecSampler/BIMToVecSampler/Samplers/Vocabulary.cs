@@ -29,7 +29,10 @@ namespace BIMToVecSampler.Samplers
         public int IndexOf(string word)
         {
             int index = _vocab.IndexOf(word);
-            if(index == -1) { throw new ArgumentException("The word cannot be found in the vocabulary !"); }
+            if(index == -1)
+            {
+                throw new ArgumentException("The word cannot be found in the vocabulary !");
+            }
             return index;
         }
         public int Count { get { return _vocab.Count; } }
