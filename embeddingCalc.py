@@ -2,7 +2,7 @@ from ops import *
 from model_embeddings import getAllWords
 import math
 
-embeddings = loadFromFile("savedEmbeddings/embeddings16.pkl")
+embeddings = loadFromFile("savedEmbeddings/embeddings.pkl")
 WORDS, wordToNum = getAllWords()
 
 
@@ -47,7 +47,7 @@ def coherence(words):
         embeds.append(toEmbedding(word))
     
     embeds = np.array(embeds)
-    cosineDist = np.matmul(embeds, np.trannspose(embeds))
+    cosineDist = np.matmul(embeds, np.transpose(embeds))
     flat = np.reshape(cosineDist, [-1, 1])
     print(flat.shape)
     for val in flat:
@@ -61,5 +61,5 @@ def coherence(words):
 # print(coherence(["IfcWallStandardCase", "IfcGrid"]))
 # print(coherence(["IfcWall", "IfcDoor"]))
 
-print(nearestToWord("IfcWall",5))
-print(Extrapolate("IfcWall", "IfcDoor", "IfcReinforcingBar"))
+print(nearestToWord("ifcwall",5))
+print(Extrapolate("ifcslab", "ifcwall", "ifcstair"))
