@@ -68,4 +68,4 @@ def trainModel(epochs):
 
 if __name__ == "__main__":
     print("training started...")
-    trainModel(500)
+    trainModel(100)
