@@ -2,8 +2,8 @@ from ops import *
 from model_embeddings import getAllWords
 import math
 
-embeddings = loadFromFile("savedEmbeddings/embeddings.pkl")
-WORDS, wordToNum = getAllWords()
+EMBEDDINGS = loadFromFile("savedEmbeddings/embeddings.pkl")
+WORDS, WORD_TO_NUM = getAllWords()
 
 
 def normalize(vector):
@@ -14,7 +14,7 @@ def normalize(vector):
         return vector/norm
 
 def nearest(testEmbedding,numNearest = 1, skipFirst = True):
-    similarity = np.matmul(testEmbedding, np.transpose(embeddings))
+    similarity = np.matmul(testEmbedding, np.transpose(EMBEDDINGS))
     k = 1 if skipFirst else 0
     matches = (-similarity).argsort()[k:numNearest+k]
     # print(matches)
@@ -29,7 +29,7 @@ def nearestToWord(word, numNearest = 1):
     return nearest(testEmbedding, numNearest)
 
 def toEmbedding(word):
-    return embeddings[wordToNum[word]]
+    return EMBEDDINGS[WORD_TO_NUM[word]]
 
 def toEnglish(embed):
     return nearest(embed,1, skipFirst = False)[0]
@@ -60,6 +60,6 @@ def coherence(words):
 # # print(WORDS[min1], WORDS[min2])
 # print(coherence(["IfcWallStandardCase", "IfcGrid"]))
 # print(coherence(["IfcWall", "IfcDoor"]))
-
-print(nearestToWord("ifcwall",5))
-print(Extrapolate("ifcslab", "ifcwall", "ifcstair"))
+if __name__ == "__main__":
+    print(nearestToWord("ifcwall",5))
+    print(Extrapolate("ifcslab", "ifcwall", "ifcstair"))
