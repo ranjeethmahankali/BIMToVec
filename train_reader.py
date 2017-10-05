@@ -30,7 +30,7 @@ def prepareWord(word):
 def trainModel(epochs):
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
-        # loadModel()
+        # loadModel(sess)
         for ep in range(epochs):
             loss_list = []
             for i in range(VOCAB_SIZE):
@@ -63,7 +63,7 @@ def trainModel(epochs):
                 embed_result = _embed_predict[-1]
                 loss_list.append(_total_loss)
             print("Epoch %s - Avg.Loss: %.3f"%(ep, sum(loss_list)/VOCAB_SIZE))
-            saveModel()
+            saveModel(sess)
                 # print(_embed_predict[-1][-1] - _embed_predict[-1][-2])
 
 if __name__ == "__main__":
