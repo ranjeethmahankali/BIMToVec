@@ -17,18 +17,17 @@ LOG_DIR = "train_log/"
 # learning_rate = 1.0
 learning_rate = 0.0001
 
-model_save_path = ['savedModels/model_1.ckpt',
-                    'savedModels/model_2.ckpt']
+model_save_path = 'savedEmbeddings/rnn_reader.ckpt'
 
 # this method saves the model
-def saveModel(sess, savePath):
+def saveModel(sess, savePath = model_save_path):
     print('\n...saving the models, please wait...')
     saver = tf.train.Saver()
     saver.save(sess, savePath)
     print('Saved the model to %s'%savePath)
 
 # this method loads the saved model
-def loadModel(sess, savedPath):
+def loadModel(sess, savedPath = model_save_path):
     print('\n...loading the models, please wait...')
     saver = tf.train.Saver()
     saver.restore(sess, savedPath)
