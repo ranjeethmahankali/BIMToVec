@@ -1,4 +1,6 @@
 from embeddingCalc import *
+from rnn_reader import *
+import sys
 
 EMBEDDINGS = loadFromFile("savedEmbeddings/embeddings.pkl")
 WORDS, WORD_TO_NUM = getAllWords()
@@ -22,31 +24,46 @@ def prepareWord(word):
             continue
         asciiList.append(prepareChar(ch))
     
-    return np.array(asciiList)
+    batchSize = len(asciiList)
+    return [batchSize, asciiList, toEmbedding(word)]
 
-# converts a list of words to a list of their corresponding ascii matrices
-def prepareWordList(words):
-    word_matrix = []
-    for word in words:
-        word_matrix.append(prepareWord(word))
-    
-    return word_matrix
+def trainModel(epochs):
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        
+        for ep in range(epochs):
+            loss_list = []
+            for i in range(VOCAB_SIZE):
+                data = prepareWord(WORDS[i])
+                _current_state = np.zeros([NUM_LAYERS, 2, ASCII_VEC_DIM, STATE_SIZE])
+                # print(_current_state.shape)
+                n = 0
+                embed_series = [data[2]]*TRUNC_BACKPROP_LENGTH
+                while n < data[0]:
+                    ascii_series = None
+                    if n + TRUNC_BACKPROP_LENGTH < data[0]:
+                        ascii_series = data[1][n:n+TRUNC_BACKPROP_LENGTH]
+                    else:
+                        batch_data = np.array(data[1][n:])
+                        padding = np.zeros([n+TRUNC_BACKPROP_LENGTH- data[0], ASCII_VEC_DIM])
+                        # print(batch_data.shape, padding.shape)
+                        ascii_series = np.concatenate([batch_data, padding], axis=0)
 
-COUNTER = 0
-def next_batch(num):
-    word_ascii_matrices = []
-    word_embeddings = []
-    words = None
-    newPos = (COUNTER+num)%len(WORDS)
-    if newPos >= COUNTER:
-        words = WORDS[COUNTER:newPos]
-    else:
-        words = WORDS[COUNTER:]
-        words += WORDS[0:newPos]
+                    _, _total_loss, _current_state, _embed_predict = sess.run(
+                        [train_step, total_loss, current_state, embed_predict_series],
+                        feed_dict={
+                            ascii_placeholder: np.transpose(ascii_series),
+                            embedding_placeholder: np.transpose(embed_series),
+                            init_state: _current_state
+                        }
+                    )
 
-    word_ascii_matrices += prepareWordList(words)
-    for word in words:
-        word_embeddings.append(toEmbedding(word))
+                    n += TRUNC_BACKPROP_LENGTH
 
-    return [word_ascii_matrices, word_embeddings]
+                embed_result = _embed_predict[-1]
+                loss_list.append(_total_loss)
+            print("Epoch %s - Avg.Loss: %.3f"%(ep, sum(loss_list)/VOCAB_SIZE))
+                # print(_embed_predict[-1][-1] - _embed_predict[-1][-2])
 
+if __name__ == "__main__":
+    trainModel(20)
