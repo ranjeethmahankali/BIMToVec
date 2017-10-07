@@ -31,8 +31,8 @@ def nearestToWord(word, numNearest = 1):
 def toEmbedding(word):
     return EMBEDDINGS[WORD_TO_NUM[word]]
 
-def toEnglish(embed):
-    return nearest(embed,1, skipFirst = False)[0]
+def toEnglish(embed, nearest_k = 1):
+    return nearest(embed, nearest_k, skipFirst = False)[0]
 
 # A is to B as C is to what ? this function returns the answer for this
 def Extrapolate(A, B, C):    

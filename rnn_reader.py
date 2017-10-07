@@ -1,4 +1,5 @@
 from ops import *
+from embeddingCalc import *
 from model_embeddings import EMBEDDING_SIZE, VOCAB_SIZE
 
 TRUNC_BACKPROP_LENGTH = 12
@@ -44,3 +45,29 @@ total_loss = tf.reduce_mean(losses)
 
 train_step = tf.train.AdamOptimizer(1e-4).minimize(total_loss)
 # train_step = tf.train.AdagradOptimizer(0.3).minimize(total_loss)
+
+
+# convert a character to ascii code (8 bits)
+def prepareChar(ch):
+    if len(ch) != 1:
+        raise ValueError("Please supply a single character for the ascii lookup")
+    binStr = "{0:08b}".format(ord(ch))
+    binList = []
+    for d in binStr:
+        binList.append(int(d))
+    
+    return binList
+
+# converts a word into an ascii matrix and ignores non alphabets
+def prepareWord(word, training = True):
+    asciiList = []
+    for ch in word:
+        if not ch.isalpha():
+            continue
+        asciiList.append(prepareChar(ch))
+    
+    batchSize = len(asciiList)
+    if training:
+        return [batchSize, asciiList, toEmbedding(word)]
+    else:
+        return asciiList

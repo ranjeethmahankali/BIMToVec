@@ -5,28 +5,6 @@ import sys
 EMBEDDINGS = loadFromFile("savedEmbeddings/embeddings.pkl")
 WORDS, WORD_TO_NUM = getAllWords()
 
-# convert a character to ascii code (8 bits)
-def prepareChar(ch):
-    if len(ch) != 1:
-        raise ValueError("Please supply a single character for the ascii lookup")
-    binStr = "{0:08b}".format(ord(ch))
-    binList = []
-    for d in binStr:
-        binList.append(int(d))
-    
-    return binList
-
-# converts a word into an ascii matrix and ignores non alphabets
-def prepareWord(word):
-    asciiList = []
-    for ch in word:
-        if not ch.isalpha():
-            continue
-        asciiList.append(prepareChar(ch))
-    
-    batchSize = len(asciiList)
-    return [batchSize, asciiList, toEmbedding(word)]
-
 def trainModel(epochs):
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
@@ -41,7 +19,7 @@ def trainModel(epochs):
                 embed_series = [data[2]]*TRUNC_BACKPROP_LENGTH
                 while n < data[0]:
                     ascii_series = None
-                    if n + TRUNC_BACKPROP_LENGTH < data[0]:
+                    if (n + TRUNC_BACKPROP_LENGTH) <= data[0]:
                         ascii_series = data[1][n:n+TRUNC_BACKPROP_LENGTH]
                     else:
                         batch_data = np.array(data[1][n:])
