@@ -2,8 +2,8 @@ from ops import *
 from embeddingCalc import *
 from model_embeddings import EMBEDDING_SIZE, VOCAB_SIZE
 
-TRUNC_BACKPROP_LENGTH = 10
-BATCH_SIZE = 2
+TRUNC_BACKPROP_LENGTH = 8
+BATCH_SIZE = 1
 STATE_SIZE = 6
 NUM_LAYERS = 4
 EPOCH_NUM = 100
@@ -56,10 +56,10 @@ def prepareWord(word, training = True):
     converted = []
     for ch in word:
         if not ch in CHAR_LIST:
-            raise ValueError("Character not found!")
-        converted.append(CHAR_LIST.index(ch)/charNum)
+            continue
+        converted.append((CHAR_LIST.index(ch)+1)/charNum)
     
-    batchSize = len(asciiList)
+    batchSize = len(converted)
     if training:
         return [batchSize, converted, toEmbedding(word)]
     else:
