@@ -19,7 +19,7 @@ def trainModel(epochs):
                 _current_state = np.zeros([NUM_LAYERS, 2, BATCH_SIZE, STATE_SIZE])
                 # print(_current_state.shape)
                 n = 0
-                embed_series = [data[2]]*TRUNC_BACKPROP_LENGTH
+                embed_series = np.array([data[2]]*TRUNC_BACKPROP_LENGTH)
                 ascii_series = np.array(data[1])
                 ascii_series = np.reshape(ascii_series, [BATCH_SIZE,-1])
 
@@ -33,6 +33,7 @@ def trainModel(epochs):
                 input_list = np.split(ascii_series, 
                     ascii_series.shape[1]/TRUNC_BACKPROP_LENGTH, axis=1)
                 
+                # print(embed_series.shape)
                 # [print(x.shape) for x in input_list]
                 for input_batch in input_list:
                     # print(input_batch.shape, len(embed_series))
@@ -41,7 +42,8 @@ def trainModel(epochs):
                         feed_dict={
                             ascii_placeholder: input_batch,
                             embedding_placeholder: np.transpose(embed_series),
-                            init_state: _current_state
+                            init_state: _current_state,
+                            keep_prob: 0.5
                         }
                     )
 

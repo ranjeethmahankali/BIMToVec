@@ -16,9 +16,10 @@ def normalize(vector):
 def nearest(testEmbedding,numNearest = 1, skipFirst = True):
     similarity = np.matmul(testEmbedding, np.transpose(EMBEDDINGS))
     k = 1 if skipFirst else 0
-    matches = (-similarity).argsort()[k:numNearest+k]
+    matches = (-similarity).argsort()[0,k:numNearest+k]
     # print(matches)
     matchWords = []
+    # print(matches.shape)
     for n in matches:
         matchWords.append(WORDS[n])
 
@@ -32,7 +33,10 @@ def toEmbedding(word):
     return EMBEDDINGS[WORD_TO_NUM[word]]
 
 def toEnglish(embed, nearest_k = 1):
-    return nearest(embed, nearest_k, skipFirst = False)[0]
+    if nearest_k == 1:
+        return nearest(embed, nearest_k, skipFirst = False)[0]
+    else:
+        return nearest(embed, nearest_k, skipFirst = False)
 
 # A is to B as C is to what ? this function returns the answer for this
 def Extrapolate(A, B, C):    

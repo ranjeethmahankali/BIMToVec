@@ -34,7 +34,8 @@ with tf.Session() as sess:
                 [current_state, embed_predict_series],
                 feed_dict={
                     ascii_placeholder: input_batch,
-                    init_state: _current_state
+                    init_state: _current_state,
+                    keep_prob:1
                 }
             )
         embed_result = _embed_predict[-1]
