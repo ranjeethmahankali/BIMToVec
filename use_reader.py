@@ -8,29 +8,34 @@ with tf.Session() as sess:
     while True:
         word = input("Enter the word: ")
         data = prepareWord(word, training = False)
+        if len(data) == 0:
+            continue
+
         _current_state = np.zeros([NUM_LAYERS, 2, BATCH_SIZE, STATE_SIZE])
         # print(_current_state.shape)
         n = 0
-        while n < len(data):
-            ascii_series = None
-            # print(n, TRUNC_BACKPROP_LENGTH, n+TRUNC_BACKPROP_LENGTH, len(data))
-            if (n + TRUNC_BACKPROP_LENGTH) < len(data):
-                ascii_series = data[1][n:n+TRUNC_BACKPROP_LENGTH]
-            else:
-                batch_data = np.array(data[n:])
-                padding = np.zeros([n+TRUNC_BACKPROP_LENGTH- len(data), BATCH_SIZE])
-                # print(batch_data.shape, padding.shape)
-                ascii_series = np.concatenate([batch_data, padding], axis=0)
+        ascii_series = np.array(data)
+        ascii_series = np.reshape(ascii_series, [BATCH_SIZE,-1])
 
+        num = ascii_series.shape[1]%TRUNC_BACKPROP_LENGTH
+        # print(ascii_series.shape, num)
+        if num > 0:
+            ascii_series = np.concatenate(
+                [ascii_series, np.zeros([BATCH_SIZE, TRUNC_BACKPROP_LENGTH-num])],axis = 1)
+        
+        # print(ascii_series.shape)
+        input_list = np.split(ascii_series, 
+            ascii_series.shape[1]/TRUNC_BACKPROP_LENGTH, axis=1)
+        
+        # [print(x.shape) for x in input_list]
+        for input_batch in input_list:
+            # print(input_batch.shape, len(embed_series))
             _current_state, _embed_predict = sess.run(
                 [current_state, embed_predict_series],
                 feed_dict={
-                    ascii_placeholder: np.transpose(ascii_series),
+                    ascii_placeholder: input_batch,
                     init_state: _current_state
                 }
             )
-
-            n += TRUNC_BACKPROP_LENGTH
-
         embed_result = _embed_predict[-1]
         print(toEnglish(embed_result,3))

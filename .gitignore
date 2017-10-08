@@ -3,6 +3,7 @@
 *.dll
 *.exe
 *.ifc
+*.pyc
 
 *.pkl
 *.cache
