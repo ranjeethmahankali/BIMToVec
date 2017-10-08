@@ -13,7 +13,7 @@ def trainModel(epochs):
             loss_list = []
             for i in range(VOCAB_SIZE):
                 data = prepareWord(WORDS[i])
-                _current_state = np.zeros([NUM_LAYERS, 2, ASCII_VEC_DIM, STATE_SIZE])
+                _current_state = np.zeros([NUM_LAYERS, 2, BATCH_SIZE, STATE_SIZE])
                 # print(_current_state.shape)
                 n = 0
                 embed_series = [data[2]]*TRUNC_BACKPROP_LENGTH
@@ -23,7 +23,7 @@ def trainModel(epochs):
                         ascii_series = data[1][n:n+TRUNC_BACKPROP_LENGTH]
                     else:
                         batch_data = np.array(data[1][n:])
-                        padding = np.zeros([n+TRUNC_BACKPROP_LENGTH- data[0], ASCII_VEC_DIM])
+                        padding = np.zeros([n+TRUNC_BACKPROP_LENGTH- data[0], BATCH_SIZE])
                         # print(batch_data.shape, padding.shape)
                         ascii_series = np.concatenate([batch_data, padding], axis=0)
 

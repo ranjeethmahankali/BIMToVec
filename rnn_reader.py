@@ -2,16 +2,16 @@ from ops import *
 from embeddingCalc import *
 from model_embeddings import EMBEDDING_SIZE, VOCAB_SIZE
 
-TRUNC_BACKPROP_LENGTH = 12
-ASCII_VEC_DIM = 8
+TRUNC_BACKPROP_LENGTH = 10
+BATCH_SIZE = 2
 STATE_SIZE = 6
 NUM_LAYERS = 4
 EPOCH_NUM = 100
 
-ascii_placeholder = tf.placeholder(tf.float32, [ASCII_VEC_DIM, TRUNC_BACKPROP_LENGTH])
+ascii_placeholder = tf.placeholder(tf.float32, [BATCH_SIZE, TRUNC_BACKPROP_LENGTH])
 embedding_placeholder = tf.placeholder(tf.float32, [EMBEDDING_SIZE, TRUNC_BACKPROP_LENGTH])
 
-init_state = tf.placeholder(tf.float32, [NUM_LAYERS, 2, ASCII_VEC_DIM, STATE_SIZE])
+init_state = tf.placeholder(tf.float32, [NUM_LAYERS, 2, BATCH_SIZE, STATE_SIZE])
 state_per_layer_list = tf.unstack(init_state, axis = 0)
 rnn_tuple_state = tuple(
     [tf.nn.rnn_cell.LSTMStateTuple(state_per_layer_list[i][0], state_per_layer_list[i][1]) for i in range(NUM_LAYERS)]
@@ -46,28 +46,21 @@ total_loss = tf.reduce_mean(losses)
 train_step = tf.train.AdamOptimizer(1e-4).minimize(total_loss)
 # train_step = tf.train.AdagradOptimizer(0.3).minimize(total_loss)
 
-
-# convert a character to ascii code (8 bits)
-def prepareChar(ch):
-    if len(ch) != 1:
-        raise ValueError("Please supply a single character for the ascii lookup")
-    binStr = "{0:08b}".format(ord(ch))
-    binList = []
-    for d in binStr:
-        binList.append(int(d))
-    
-    return binList
+############ Now writing functions to process input for the RNN
+CHAR_LIST = list("abcdefghijklmnopqrstuvwxyz")
 
 # converts a word into an ascii matrix and ignores non alphabets
 def prepareWord(word, training = True):
-    asciiList = []
+    global CHAR_LIST
+    charNum = len(CHAR_LIST)
+    converted = []
     for ch in word:
-        if not ch.isalpha():
-            continue
-        asciiList.append(prepareChar(ch))
+        if not ch in CHAR_LIST:
+            raise ValueError("Character not found!")
+        converted.append(CHAR_LIST.index(ch)/charNum)
     
     batchSize = len(asciiList)
     if training:
-        return [batchSize, asciiList, toEmbedding(word)]
+        return [batchSize, converted, toEmbedding(word)]
     else:
-        return asciiList
+        return converted

@@ -8,7 +8,7 @@ with tf.Session() as sess:
     while True:
         word = input("Enter the word: ")
         data = prepareWord(word, training = False)
-        _current_state = np.zeros([NUM_LAYERS, 2, ASCII_VEC_DIM, STATE_SIZE])
+        _current_state = np.zeros([NUM_LAYERS, 2, BATCH_SIZE, STATE_SIZE])
         # print(_current_state.shape)
         n = 0
         while n < len(data):
@@ -18,7 +18,7 @@ with tf.Session() as sess:
                 ascii_series = data[1][n:n+TRUNC_BACKPROP_LENGTH]
             else:
                 batch_data = np.array(data[n:])
-                padding = np.zeros([n+TRUNC_BACKPROP_LENGTH- len(data), ASCII_VEC_DIM])
+                padding = np.zeros([n+TRUNC_BACKPROP_LENGTH- len(data), BATCH_SIZE])
                 # print(batch_data.shape, padding.shape)
                 ascii_series = np.concatenate([batch_data, padding], axis=0)
 
