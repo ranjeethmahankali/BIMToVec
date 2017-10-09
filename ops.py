@@ -22,18 +22,18 @@ alpha = 0.01
 model_save_path = 'savedEmbeddings/rnn_reader.ckpt'
 
 # this method saves the model
-def saveModel(sess, savePath = model_save_path):
-    print('\n...saving the models, please wait...')
+def saveModel(sess, savePath = model_save_path, silent = False):
+    if not silent: print('\n...saving the models, please wait...')
     saver = tf.train.Saver()
     saver.save(sess, savePath)
-    print('Saved the model to %s'%savePath)
+    if not silent: print('Saved the model to %s'%savePath)
 
 # this method loads the saved model
-def loadModel(sess, savedPath = model_save_path):
-    print('\n...loading the models, please wait...')
+def loadModel(sess, savedPath = model_save_path, silent = False):
+    if not silent: print('\n...loading the models, please wait...')
     saver = tf.train.Saver()
     saver.restore(sess, savedPath)
-    print('Loaded the model from %s'%savedPath)
+    if not silent: print('Loaded the model from %s'%savedPath)
 
 # weight variable
 def weightVariable(shape, name):
@@ -110,6 +110,9 @@ def estimate_time(startTime, totalCycles, finishedCycles):
 
     timeStr = '%.0fh%.0fm%.0fs remaining'%(hrs, mins, secs) + ' '*10
     return timeStr
+
+def progress_bar(size, completion):
+    return "|%s|"%('#'*completion + " "*(size-completion))
 
 # this is the dataset object which is responsible with supplying data for training as well as
 # testing purposes
@@ -212,8 +215,9 @@ def loadFromFile(path):
         return pickle.load(f)
 
 # this creates summaries for variables to be used by tensorboard
-def summarize(varT):
-    varName = varT.name[:-2]
+def summarize(varT, varName = None):
+    if varName is None:
+        varName = varT.name[:-2]
     with tf.name_scope(varName):
         var_mean = tf.reduce_mean(varT)
         var_sum = tf.reduce_sum(varT)
@@ -230,8 +234,8 @@ def summarize(varT):
 
 # this returns the writer objects for training and testing
 def getSummaryWriters(sess):
-    train_writer = tf.summary.FileWriter(log_dir + 'train', sess.graph)
-    test_writer = tf.summary.FileWriter(log_dir + 'test')
+    train_writer = tf.summary.FileWriter(LOG_DIR + 'train', sess.graph)
+    test_writer = tf.summary.FileWriter(LOG_DIR + 'test')
 
     return [train_writer, test_writer]
 

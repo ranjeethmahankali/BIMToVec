@@ -78,7 +78,9 @@ embed_predict_series = [
 losses = [tf.reduce_sum(tf.abs(tf.transpose(output)-target))
             for output, target in zip(embed_predict_series, target_series)]
 # total_loss = tf.reduce_mean(losses)
-total_loss = tf.reduce_mean(losses) + (l2_loss()*alpha)
+summarize(losses, 'embed_loss')
+total_loss = tf.add(tf.reduce_mean(losses), l2_loss()*alpha, name="total_loss")
+tf.summary.scalar('total_loss_avg', total_loss)
 
 train_step = tf.train.AdamOptimizer(learning_rate).minimize(total_loss)
 # train_step = tf.train.AdagradOptimizer(0.3).minimize(total_loss)
