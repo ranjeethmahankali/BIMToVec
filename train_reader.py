@@ -8,7 +8,7 @@ WORDS, WORD_TO_NUM = getAllWords()
 def trainModel(epochs):
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
-        # loadModel(sess)
+        loadModel(sess)
         for ep in range(epochs):
             loss_list = []
             for i in range(VOCAB_SIZE):

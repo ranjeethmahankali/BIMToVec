@@ -80,7 +80,7 @@ losses = [tf.reduce_sum(tf.abs(tf.transpose(output)-target))
 # total_loss = tf.reduce_mean(losses)
 total_loss = tf.reduce_mean(losses) + (l2_loss()*alpha)
 
-train_step = tf.train.AdamOptimizer(1e-4).minimize(total_loss)
+train_step = tf.train.AdamOptimizer(learning_rate).minimize(total_loss)
 # train_step = tf.train.AdagradOptimizer(0.3).minimize(total_loss)
 
 ############ Now writing functions to process input for the RNN

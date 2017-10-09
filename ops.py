@@ -15,7 +15,7 @@ resDir = 'results/'
 LOG_DIR = "train_log/"
 
 # learning_rate = 1.0
-learning_rate = 0.0001
+learning_rate = 0.0006
 # coefficient for l2_loss
 alpha = 0.1
 
