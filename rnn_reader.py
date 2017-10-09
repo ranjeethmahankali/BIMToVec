@@ -36,7 +36,7 @@ def l2_loss():
     return l2_loss
 
 def fullyConnected(state, keep_prob):
-    h1 = tf.nn.relu(tf.relu(state,w1) + b1)
+    h1 = tf.nn.relu(tf.matmul(state,w1) + b1)
     h2 = tf.nn.tanh(tf.matmul(h1, w2) + b2)
     h3 = tf.nn.tanh(tf.matmul(h2, w3) + b3)
     h4 = tf.nn.tanh(tf.matmul(h3, w4) + b4)
@@ -75,7 +75,7 @@ embed_predict_series = [
     ]
 # [print(tensor.get_shape()) for tensor in embed_predict_series]
 
-losses = [tf.reduce_sum(tf.square(tf.transpose(output)-target))
+losses = [tf.reduce_sum(tf.abs(tf.transpose(output)-target))
             for output, target in zip(embed_predict_series, target_series)]
 # total_loss = tf.reduce_mean(losses)
 total_loss = tf.reduce_mean(losses) + (l2_loss()*alpha)
