@@ -16,15 +16,15 @@ OUTPUT_DIM = 64
 
 with tf.variable_scope('fullyConnected'):
     w1 = weightVariable([STATE_SIZE, HIDDEN_DIM_1], 'w1')
-    b1 = weightVariable([1, HIDDEN_DIM_1], 'b1')
+    b1 = weightVariable([HIDDEN_DIM_1], 'b1')
     w2 = weightVariable([HIDDEN_DIM_1, HIDDEN_DIM_2], 'w2')
-    b2 = weightVariable([1, HIDDEN_DIM_2], 'b2')
+    b2 = weightVariable([HIDDEN_DIM_2], 'b2')
     w3 = weightVariable([HIDDEN_DIM_2, HIDDEN_DIM_3], 'w3')
-    b3 = weightVariable([1, HIDDEN_DIM_3], 'b3')
+    b3 = weightVariable([HIDDEN_DIM_3], 'b3')
     w4 = weightVariable([HIDDEN_DIM_3, HIDDEN_DIM_4], 'w4')
-    b4 = weightVariable([1, HIDDEN_DIM_4], 'b4')
+    b4 = weightVariable([HIDDEN_DIM_4], 'b4')
     w5 = weightVariable([HIDDEN_DIM_4, OUTPUT_DIM], 'w5')
-    b5 = weightVariable([1, OUTPUT_DIM], 'b5')
+    b5 = weightVariable([OUTPUT_DIM], 'b5')
 
 def l2_loss():
     all_vars = tf.trainable_variables()
