@@ -111,7 +111,7 @@ def loss_optim(embed_predict, embed_true):
     # calculating loss based on dot product
     losses = tf.diag_part(-tf.matmul(embed_predict, tf.transpose(embed_true)))
     summarize(losses, varName = "embed_losses")
-    loss = tf.reduce_mean(losses)
+    loss = tf.reduce_sum(losses)
 
     l2_loss = 0
     all_vars = tf.trainable_variables()
