@@ -107,7 +107,9 @@ def reader_model(word_ascii, keep_prob):
     return (1+h6)/2
 
 def loss_optim(embed_predict, embed_true):
-    losses = tf.reduce_sum(tf.abs(embed_predict - embed_true),axis=0)
+    # losses = tf.reduce_sum(tf.abs(embed_predict - embed_true),axis=0)
+    # calculating loss based on dot product
+    losses = tf.diag_part(tf.matmul(embed_predict, tf.transpose(embed_true)))
     summarize(losses, varName = "embed_losses")
     loss = tf.reduce_mean(losses)
 
