@@ -15,11 +15,11 @@ resDir = 'results/'
 LOG_DIR = "train_log/"
 
 # learning_rate = 1.0
-learning_rate = 0.0001
+learning_rate = 0.00001
 # coefficient for l2_loss
-alpha = 0.01
+alpha = 0.001
 
-model_save_path = 'savedEmbeddings/rnn_reader.ckpt'
+model_save_path = 'savedEmbeddings/conv_reader.ckpt'
 
 # this method saves the model
 def saveModel(sess, savePath = model_save_path, silent = False):
