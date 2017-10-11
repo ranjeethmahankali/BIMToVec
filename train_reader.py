@@ -1,4 +1,4 @@
-from conv_reader import *
+from fc_reader import *
 import shutil
 import sys
 
