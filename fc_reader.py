@@ -129,7 +129,7 @@ def loss_optim(embed_predict, embed_true):
 
     output_similarity = tf.matmul(embed_predict, tf.transpose(embed_predict))
     summarize(output_similarity, "output_similarity")
-    # loss += 0.01 * tf.reduce_sum(output_similarity)
+    loss += 0.02 * tf.reduce_sum(output_similarity)
 
     optim = tf.train.AdamOptimizer(learning_rate, beta).minimize(loss)
     # optim = tf.train.GradientDescentOptimizer(0.1).minimize(loss)
