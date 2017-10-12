@@ -3,15 +3,6 @@ import random
 import math
 from tensorflow.contrib.tensorboard.plugins import projector
 
-def getAllWords():
-    with open('data/vocabulary.dat') as f:
-        words = f.read().splitlines()
-    wordList = list(words)
-    wordDict = dict()
-    for i in range(len(words)):
-        wordDict[wordList[i]] = i 
-    return [wordList, wordDict]
-
 def saveWordsAsMetadata():
     with open(LOG_DIR+"metadata.tsv", "w") as file:
         file.write("Words\tIndex\n")
@@ -27,7 +18,7 @@ valid_set = random.sample(range(VOCAB_SIZE), VOCAB_SIZE//3 if VOCAB_SIZE//3 >= 1
 # Variables
 with tf.variable_scope("vars"):
     embeddings = tf.Variable(
-        tf.random_uniform([VOCAB_SIZE, EMBEDDING_SIZE], -1e-4, 1e-4),
+        tf.random_uniform([VOCAB_SIZE, EMBEDDING_SIZE], minval=-1e-4, maxval=1e-4),
         name='embeddings'
     )
 

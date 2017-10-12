@@ -1,10 +1,8 @@
 from ops import *
-from model_embeddings import getAllWords
 import math
 
 EMBEDDINGS = loadFromFile("savedEmbeddings/embeddings.pkl")
 WORDS, WORD_TO_NUM = getAllWords()
-
 
 def normalize(vector):
     norm = np.sqrt(np.square(vector).sum())
@@ -16,8 +14,8 @@ def normalize(vector):
 def nearest(testEmbedding,numNearest = 1, skipFirst = True):
     similarity = np.matmul(testEmbedding, np.transpose(EMBEDDINGS))
     k = 1 if skipFirst else 0
-    matches = (-similarity).argsort()[0,k:numNearest+k]
-    # print(matches)
+    matches = (-similarity).argsort()[k:numNearest+k]
+    # print(matches.shape)
     matchWords = []
     # print(matches.shape)
     for n in matches:
@@ -65,5 +63,5 @@ def coherence(words):
 # print(coherence(["IfcWallStandardCase", "IfcGrid"]))
 # print(coherence(["IfcWall", "IfcDoor"]))
 if __name__ == "__main__":
-    print(nearestToWord("ifcwall",5))
-    print(Extrapolate("ifcslab", "ifcwall", "ifcstair"))
+    print(nearestToWord("concretecastinsitu",5))
+    print(Extrapolate("ifcroof", "defaultroof", "ifcwall"))
