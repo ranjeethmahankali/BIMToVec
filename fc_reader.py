@@ -114,7 +114,7 @@ def loss_optim(embed_predict, embed_true):
     # calculating loss based on dot product
     similarities = tf.diag_part(tf.matmul(embed_predict, tf.transpose(embed_true)))
     summarize(similarities, varName = "similarities")
-    loss = 1/tf.reduce_sum(similarities)
+    loss = 100/tf.reduce_sum(similarities)
 
     tf.summary.scalar("raw_loss", loss)
 
@@ -129,7 +129,7 @@ def loss_optim(embed_predict, embed_true):
 
     output_similarity = tf.matmul(embed_predict, tf.transpose(embed_predict))
     summarize(output_similarity, "output_similarity")
-    loss += 0.02 * tf.reduce_sum(output_similarity)
+    loss += 0.04 * tf.reduce_sum(output_similarity)
 
     optim = tf.train.AdamOptimizer(learning_rate, beta).minimize(loss)
     # optim = tf.train.GradientDescentOptimizer(0.1).minimize(loss)
