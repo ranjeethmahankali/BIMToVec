@@ -27,7 +27,7 @@ def plot(embeddings, WORDS):
 words_dataset = dataset("data/")
 # dataset size: 668,597,822
 # training
-steps = int(4e6)
+steps = int(1e7)
 logStep = 50000
 with tf.Session() as sess:
     tf.global_variables_initializer().run()
@@ -36,17 +36,20 @@ with tf.Session() as sess:
     saveWordsAsMetadata()
     embedding.metadata_path = 'metadata.tsv'
     projector.visualize_embeddings(summary_writer, config)
+    train_writer, test_writer = getSummaryWriters(sess)
 
     startTime = time.time()
     for i in range(steps):
         # batch_labels, batch_targets = process_batch(words_dataset.next_batch(batch_size))
         # print(words_dataset.curFile, words_dataset.c, batch_labels.shape, batch_targets.shape)
         batch = words_dataset.next_batch(batch_size)
-        _, lossVal = sess.run([optim, loss], feed_dict={
+        _, lossVal, summary = sess.run([optim, loss, merged_summary], feed_dict={
             train_labels: batch[0], #batch_labels,
             train_targets: batch[1]#batch_targets
         })
 
+        if i % 100:
+            train_writer.add_summary(summary, i)
         # now printing progress
         pBarLen = 20
         sys.stdout.write("|%s| - Training(%s/%s)-%s\r"%(progressBar((i//200)%pBarLen, pBarLen),i,steps,
