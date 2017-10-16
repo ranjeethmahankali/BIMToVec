@@ -1,6 +1,7 @@
 from ops import *
 from collections import *
 import multiprocessing as mp
+import math
 import spacy
 nlp = spacy.load("en")
 
@@ -35,7 +36,10 @@ def atomize_vocabulary(vocab, passes = 1):
     return BASE_VOCAB
 
 # This function computes and returns the LevenshteinDistance between two strings
-def LevenshteinDistance(s, t):
+# but this has been modified to bail out if the distance goes over the max limit to save time
+# this bailing out behavior can be controlled with the maxDist param... by default it wont
+# bail out
+def LevenshteinDistance(s, t, maxDist = math.inf, costSum = 0):
     if s == "":
         return len(t)
     if t == "":
@@ -45,9 +49,14 @@ def LevenshteinDistance(s, t):
     else:
         cost = 1
 
-    res = min([LevenshteinDistance(s[:-1], t) + 1,
-               LevenshteinDistance(s, t[:-1]) + 1,
-               LevenshteinDistance(s[:-1], t[:-1]) + cost])
+    costSum += cost
+    if costSum > maxDist:
+        return math.inf
+
+    res = min([LevenshteinDistance(s[:-1], t, maxDist=maxDist, costSum=costSum) + 1,
+               LevenshteinDistance(s, t[:-1], maxDist=maxDist, costSum=costSum) + 1,
+               LevenshteinDistance(s[:-1], t[:-1], maxDist=maxDist, costSum=costSum) + cost])
+
     return res
 
 def remove_similar(wordSet, score_dict):
@@ -56,8 +65,8 @@ def remove_similar(wordSet, score_dict):
             if w1 == w2:
                 continue
 
-            LD = LevenshteinDistance(w1, w2)
-            MIN_LEVENSHTEIN = min(min(len(w1), len(w2))//2, 3)
+            MIN_LEVENSHTEIN = min(min(len(w1), len(w2)) // 2, 3)
+            LD = LevenshteinDistance(w1, w2, maxDist=MIN_LEVENSHTEIN)
 
             if LD <= MIN_LEVENSHTEIN:
                 if score_dict[w1] > score_dict[w2]:
@@ -81,6 +90,9 @@ def atomize_word(word, vocab):
     WORD_LIST = [w for w in SORTED if ATOMIZED[w] > MIN_COUNT]
     WORD_LIST = remove_similar(WORD_LIST, SCORE_DICT)
 
+    if len(WORD_LIST) == 0:
+        return []
+
     scores = np.array([SCORE_DICT[w] for w in WORD_LIST])
     mean = scores.mean()
     std = scores.std()
@@ -92,7 +104,6 @@ def atomize_word(word, vocab):
             ATOMS.append(WORD_LIST[i])
 
     return ATOMS
-
 
 def score_word(word, count):
     effectiveLength = min(len(word)-MIN_WORD_LENGTH, 10)
@@ -110,9 +121,17 @@ def print_atoms(word):
     GLOBAL_COUNT += 1
     print("[%s of %s] - %s: %s" % (GLOBAL_COUNT, WORD_COUNT,word, ", ".join(atoms)))
     for atom in atoms:
-        atom_vocab_file.write(atom+"\n")
-
+        if not atom in GLOBAL_ATOMS:
+            GLOBAL_ATOMS.add(atom)
+            atom_vocab_file.write(atom+"\n")
+    
+    return GLOBAL_ATOMS, GLOBAL_COUNT
 
 if __name__ == "__main__":
-    pool = mp.Pool(processes=2)
-    pool.map(print_atoms, WORDS)
+    try:
+        pool = mp.Pool(processes=2)
+        GLOBAL_ATOMS, GLOBAL_COUNT = pool.map(print_atoms, WORDS)
+        atom_vocab_file.close()
+    except KeyboardInterrupt:
+        atom_vocab_file.close()
+        quit()
