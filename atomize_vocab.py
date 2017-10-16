@@ -114,7 +114,6 @@ def score_word(word, count):
 atom_vocab_file = open("data/atom_vocabulary.dat", "w")
 
 GLOBAL_COUNT = 0
-GLOBAL_ATOMS = set()
 def print_atoms(word):
     global GLOBAL_COUNT
     atoms = atomize_word(word, WORDS)
@@ -125,13 +124,15 @@ def print_atoms(word):
             GLOBAL_ATOMS.add(atom)
             atom_vocab_file.write(atom+"\n")
     
-    return GLOBAL_ATOMS, GLOBAL_COUNT
+    return GLOBAL_COUNT
 
 if __name__ == "__main__":
     try:
         pool = mp.Pool(processes=2)
-        GLOBAL_ATOMS, GLOBAL_COUNT = pool.map(print_atoms, WORDS)
+        GLOBAL_COUNT = pool.map(print_atoms, WORDS)
         atom_vocab_file.close()
+        print("finished atomizing the words...!")
     except KeyboardInterrupt:
         atom_vocab_file.close()
+        print("failed !!!")
         quit()
