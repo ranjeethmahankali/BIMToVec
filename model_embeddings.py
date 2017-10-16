@@ -48,8 +48,10 @@ loss = tf.reduce_mean(tf.nn.sampled_softmax_loss(
     num_classes = VOCAB_SIZE,
 ))
 
-# optim = tf.train.AdagradOptimizer(learning_rate).minimize(loss)
-optim = tf.train.AdamOptimizer(learning_rate).minimize(loss)
+tf.summary.scalar("embedding_loss", loss)
+
+optim = tf.train.AdagradOptimizer(1.0).minimize(loss)
+# optim = tf.train.AdamOptimizer(learning_rate).minimize(loss)
 
 norm = tf.sqrt(tf.reduce_sum(tf.square(embeddings), 1, keep_dims=True))
 normalized_embeddings = embeddings / norm
@@ -64,6 +66,8 @@ similarity = tf.matmul(valid_embeddings, tf.transpose(normalized_embeddings))
 config = projector.ProjectorConfig()
 embedding = config.embeddings.add()
 embedding.tensor_name = embeddings.name
+
+merged_summary = tf.summary.merge_all()
 
 """
 Loss: 18.4618
