@@ -33,3 +33,6 @@ dataGen/BIMToVecSampler/
 
 .vscode/
 .vscode/*
+
+.idea/
+.idea/*
