@@ -27,12 +27,13 @@ def plot(embeddings, WORDS):
 words_dataset = dataset("data/")
 # dataset size: 668,597,822
 # training
-steps = int(5e6)
+steps = int(1e6)
 logStep = 50000
 with tf.Session() as sess:
     tf.global_variables_initializer().run()
     shutil.rmtree(LOG_DIR, ignore_errors=True)
     summary_writer = tf.summary.FileWriter(LOG_DIR)
+    loadModel(sess, LOG_DIR + "model.ckpt")
     saveWordsAsMetadata()
     embedding.metadata_path = 'metadata.tsv'
     projector.visualize_embeddings(summary_writer, config)
@@ -69,8 +70,7 @@ with tf.Session() as sess:
                     msg += close_word #+ ": %.08f\n"%sim[i,k]
                 print(msg)
             print("------------------------------------------")
-            saver = tf.train.Saver()
-            saver.save(sess, LOG_DIR+"model.ckpt")
+            saveModel(sess, LOG_DIR+"model.ckpt")
             
             final_embeddings = normalized_embeddings.eval()
             writeToFile(final_embeddings, "savedEmbeddings/embeddings.pkl")
