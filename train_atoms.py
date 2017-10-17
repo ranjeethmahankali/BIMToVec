@@ -31,6 +31,7 @@ steps = int(5e6)
 logStep = 50000
 with tf.Session() as sess:
     tf.global_variables_initializer().run()
+    loadModel(sess, LOG_DIR+"atom_model.ckpt")
     shutil.rmtree(LOG_DIR, ignore_errors=True)
     summary_writer = tf.summary.FileWriter(LOG_DIR)
     saveWordsAsMetadata()
@@ -69,8 +70,7 @@ with tf.Session() as sess:
                     msg += close_word #+ ": %.08f\n"%sim[i,k]
                 print(msg)
             print("------------------------------------------")
-            saver = tf.train.Saver()
-            saver.save(sess, LOG_DIR+"atom_model.ckpt")
+            saveModel(sess, LOG_DIR+"atom_model.ckpt")
             
             final_embeddings = normalized_embeddings.eval()
             writeToFile(final_embeddings, "savedEmbeddings/atom_embeddings.pkl")
