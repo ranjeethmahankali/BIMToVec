@@ -6,7 +6,7 @@ import shutil
 
 # instance of a tsne thing
 tsne = TSNE(perplexity=30.0, n_components=2, init="pca", n_iter=5000)
-WORDS = getAllWords()
+WORDS, WORD_TO_NUM = getAllWords()
 
 # progressBar as a string of # signs
 def progressBar(counter, size):
@@ -24,12 +24,8 @@ def plot(embeddings, atoms):
     
     pylab.show()
 
-# loading the dataset
-words_dataset = dataset("data/")
-def next_atomBatch():
-    nums = words_dataset.next_batch(1)
-    words = [WORDS[n] for n in nums]
-# dataset size: 668,597,822
+
+atoms_dataset = dataset("data/atoms/")
 # training
 steps = int(5e6)
 logStep = 50000
@@ -38,7 +34,7 @@ with tf.Session() as sess:
     shutil.rmtree(LOG_DIR, ignore_errors=True)
     summary_writer = tf.summary.FileWriter(LOG_DIR)
     saveWordsAsMetadata()
-    embedding.metadata_path = 'metadata.tsv'
+    embedding.metadata_path = 'atoms_metadata.tsv'
     projector.visualize_embeddings(summary_writer, config)
     train_writer, test_writer = getSummaryWriters(sess)
 
@@ -46,7 +42,7 @@ with tf.Session() as sess:
     for i in range(steps):
         # batch_labels, batch_targets = process_batch(words_dataset.next_batch(batch_size))
         # print(words_dataset.curFile, words_dataset.c, batch_labels.shape, batch_targets.shape)
-        batch = words_dataset.next_batch(batch_size)
+        batch = atoms_dataset.next_batch(100)
         _, lossVal, summary = sess.run([optim, loss, merged_summary], feed_dict={
             train_labels: batch[0], #batch_labels,
             train_targets: batch[1]#batch_targets
@@ -74,10 +70,10 @@ with tf.Session() as sess:
                 print(msg)
             print("------------------------------------------")
             saver = tf.train.Saver()
-            saver.save(sess, LOG_DIR+"model.ckpt")
+            saver.save(sess, LOG_DIR+"atom_model.ckpt")
             
             final_embeddings = normalized_embeddings.eval()
-            writeToFile(final_embeddings, "savedEmbeddings/embeddings.pkl")
+            writeToFile(final_embeddings, "savedEmbeddings/atom_embeddings.pkl")
             # plotting using t-SNE
             # two_d_embeddings = tsne.fit_transform(final_embeddings)
             # plot(two_d_embeddings, WORDS)
@@ -86,4 +82,4 @@ with tf.Session() as sess:
     two_d_embeddings = tsne.fit_transform(final_embeddings)
     plot(two_d_embeddings, WORDS)
 
-    writeToFile(final_embeddings, "savedEmbeddings/embeddings.pkl")
+    writeToFile(final_embeddings, "savedEmbeddings/atom_embeddings.pkl")

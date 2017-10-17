@@ -3,16 +3,17 @@ import random
 import math
 from tensorflow.contrib.tensorboard.plugins import projector
 
-def saveWordsAsMetadata():
-    with open(LOG_DIR+"atoms\metadata.tsv", "w") as file:
-        file.write("Words\tIndex\n")
-        for word in WORDS:
-            file.write("%s\t%s\n"%(word, WORDS.index(word)))
-
 # constants
 ATOMS, atomToNum = getAllAtoms()
-VOCAB_SIZE = len(WORDS)
+VOCAB_SIZE = len(ATOMS)
 EMBEDDING_SIZE = 32
+
+def saveWordsAsMetadata():
+    with open(LOG_DIR+"atoms_metadata.tsv", "w") as file:
+        file.write("Words\tIndex\n")
+        for word in ATOMS:
+            file.write("%s\t%s\n"%(word, ATOMS.index(word)))
+
 valid_set = random.sample(range(VOCAB_SIZE), VOCAB_SIZE//3 if VOCAB_SIZE//3 >= 1 else 1)
 
 # Variables

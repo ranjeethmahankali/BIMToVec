@@ -225,7 +225,7 @@ def getAllWords():
     return [wordList, wordDict]
 
 def getAllAtoms():
-    with open('data/atom_vocabulary.dat') as f:
+    with open('data/atoms/vocabulary.dat') as f:
         words = f.read().splitlines()
     wordList = list(words)
     wordDict = dict()
