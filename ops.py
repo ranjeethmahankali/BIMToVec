@@ -224,6 +224,15 @@ def getAllWords():
         wordDict[wordList[i]] = i 
     return [wordList, wordDict]
 
+def getAllAtoms():
+    with open('data/atom_vocabulary.dat') as f:
+        words = f.read().splitlines()
+    wordList = list(words)
+    wordDict = dict()
+    for i in range(len(words)):
+        wordDict[wordList[i]] = i 
+    return [wordList, wordDict]
+
 # this creates summaries for variables to be used by tensorboard
 def summarize(varT, varName = None):
     if varName is None:

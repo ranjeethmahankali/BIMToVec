@@ -1,4 +1,4 @@
-from model_embeddings import *
+from atom_embeddings import *
 from sklearn.manifold import TSNE
 from matplotlib import pylab
 import sys
@@ -6,6 +6,7 @@ import shutil
 
 # instance of a tsne thing
 tsne = TSNE(perplexity=30.0, n_components=2, init="pca", n_iter=5000)
+WORDS = getAllWords()
 
 # progressBar as a string of # signs
 def progressBar(counter, size):
@@ -13,10 +14,10 @@ def progressBar(counter, size):
     return (counter*"#")+((size-counter)*" ")
 
 # this displays a scatter plot of the embeddings
-def plot(embeddings, WORDS):
-    assert embeddings.shape[0] >= len(WORDS)
+def plot(embeddings, atoms):
+    assert embeddings.shape[0] >= len(atoms)
     pylab.figure(figsize=(15,15)) # 15 inches
-    for i,label in enumerate(WORDS):
+    for i,label in enumerate(atoms):
         x, y = embeddings[i,:]
         pylab.scatter(x,y)
         pylab.annotate(label,xy=[x,y],xytext=(5,2),textcoords='offset points',ha='right',va='bottom')
@@ -25,6 +26,9 @@ def plot(embeddings, WORDS):
 
 # loading the dataset
 words_dataset = dataset("data/")
+def next_atomBatch():
+    nums = words_dataset.next_batch(1)
+    words = [WORDS[n] for n in nums]
 # dataset size: 668,597,822
 # training
 steps = int(5e6)
