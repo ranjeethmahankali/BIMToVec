@@ -31,7 +31,7 @@ steps = int(1e6)
 logStep = 50000
 with tf.Session() as sess:
     tf.global_variables_initializer().run()
-    loadModel(sess, LOG_DIR + "model.ckpt")
+    # loadModel(sess, LOG_DIR + "model.ckpt")
     shutil.rmtree(LOG_DIR, ignore_errors=True)
     summary_writer = tf.summary.FileWriter(LOG_DIR)
     saveWordsAsMetadata()

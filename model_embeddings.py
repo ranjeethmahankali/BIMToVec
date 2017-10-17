@@ -17,12 +17,12 @@ valid_set = random.sample(range(VOCAB_SIZE), VOCAB_SIZE//3 if VOCAB_SIZE//3 >= 1
 
 # Variables
 with tf.variable_scope("vars"):
-    # embeddings = tf.Variable(
-    #     tf.random_uniform([VOCAB_SIZE, EMBEDDING_SIZE], minval=-1e-4, maxval=1e-4),
-    #     name='embeddings'
-    # )
+    embeddings = tf.Variable(
+        tf.random_uniform([VOCAB_SIZE, EMBEDDING_SIZE], minval=-1e-4, maxval=1e-4),
+        name='embeddings'
+    )
 
-    embeddings = tf.Variable(loadFromFile("savedEmbeddings/embeddings.pkl"), name='embeddings')
+    # embeddings = tf.Variable(loadFromFile("savedEmbeddings/embeddings.pkl"), name='embeddings')
 
     softmax_weights = tf.Variable(
         tf.truncated_normal([VOCAB_SIZE, EMBEDDING_SIZE], stddev=1.0/math.sqrt(EMBEDDING_SIZE)),
