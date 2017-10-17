@@ -1,6 +1,5 @@
 from ops import *
 from collections import *
-import multiprocessing as mp
 import math
 import spacy
 nlp = spacy.load("en")
@@ -70,9 +69,11 @@ def remove_similar(wordSet, score_dict):
 
             if LD <= MIN_LEVENSHTEIN:
                 if score_dict[w1] > score_dict[w2]:
-                    wordSet.remove(w2)
+                    if w2 in wordSet:
+                        wordSet.remove(w2)
                 elif score_dict[w1] < score_dict[w2]:
-                    wordSet.remove(w1)
+                    if w1 in wordSet:
+                        wordSet.remove(w1)
 
     return wordSet
 
@@ -120,7 +121,7 @@ def print_atoms(word):
     global GLOBAL_ATOMS
     atoms = atomize_word(word, WORDS)
     GLOBAL_COUNT += 1
-    print("[%s of %s] - %s: %s" % (len(GLOBAL_ATOMS), WORD_COUNT,word, ", ".join(atoms)))
+    print("[%s of %s] - %s: %s" % (GLOBAL_COUNT, WORD_COUNT,word, ", ".join(atoms)))
     for atom in atoms:
         if not atom in GLOBAL_ATOMS:
             GLOBAL_ATOMS.add(atom)
@@ -128,7 +129,6 @@ def print_atoms(word):
 
 if __name__ == "__main__":
     try:
-        pool = mp.Pool(processes=2)
         for word in WORDS:
             print_atoms(word)
         atom_vocab_file.close()
