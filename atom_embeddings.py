@@ -4,7 +4,7 @@ import math
 from tensorflow.contrib.tensorboard.plugins import projector
 
 # constants
-ATOMS, atomToNum = getAllAtoms()
+ATOMS, ATOM_TO_NUM = getAllAtoms()
 VOCAB_SIZE = len(ATOMS)
 EMBEDDING_SIZE = 32
 

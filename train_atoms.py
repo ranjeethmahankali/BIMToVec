@@ -6,7 +6,6 @@ import shutil
 
 # instance of a tsne thing
 tsne = TSNE(perplexity=30.0, n_components=2, init="pca", n_iter=5000)
-WORDS, WORD_TO_NUM = getAllWords()
 
 # progressBar as a string of # signs
 def progressBar(counter, size):
@@ -31,7 +30,7 @@ steps = int(5e6)
 logStep = 50000
 with tf.Session() as sess:
     tf.global_variables_initializer().run()
-    loadModel(sess, LOG_DIR+"atom_model.ckpt")
+    # loadModel(sess, LOG_DIR+"atom_model.ckpt")
     shutil.rmtree(LOG_DIR, ignore_errors=True)
     summary_writer = tf.summary.FileWriter(LOG_DIR)
     saveWordsAsMetadata()
@@ -60,12 +59,12 @@ with tf.Session() as sess:
             print("Loss: %s" % lossVal)
             sim = similarity.eval()
             for i in range(len(valid_set)):
-                word = WORDS[valid_set[i]]
+                word = ATOMS[valid_set[i]]
                 top_k = 5
                 nearest = (-sim[i,:]).argsort()[1:1+top_k]
                 msg = "%s: "% word
                 for k in range(top_k):
-                    close_word = WORDS[nearest[k]]
+                    close_word = ATOMS[nearest[k]]
                     if k > 0: msg += ", "#"\t"
                     msg += close_word #+ ": %.08f\n"%sim[i,k]
                 print(msg)
@@ -76,10 +75,10 @@ with tf.Session() as sess:
             writeToFile(final_embeddings, "savedEmbeddings/atom_embeddings.pkl")
             # plotting using t-SNE
             # two_d_embeddings = tsne.fit_transform(final_embeddings)
-            # plot(two_d_embeddings, WORDS)
+            # plot(two_d_embeddings, ATOMS)
         
     final_embeddings = normalized_embeddings.eval()
     two_d_embeddings = tsne.fit_transform(final_embeddings)
-    plot(two_d_embeddings, WORDS)
+    plot(two_d_embeddings, ATOMS)
 
     writeToFile(final_embeddings, "savedEmbeddings/atom_embeddings.pkl")
