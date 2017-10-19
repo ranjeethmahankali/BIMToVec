@@ -39,7 +39,7 @@ def toEnglish(embed, nearest_k = 1):
 # A is to B as C is to what ? this function returns the answer for this
 def Extrapolate(A, B, C):    
     # calculate C - A + B
-    diff = normalize(toEmbedding(A) - toEmbedding(B))
+    diff = toEmbedding(A) - toEmbedding(B)
     return toEnglish(normalize(toEmbedding(C) - diff))
 
 # this scores the belong together ness of the given collection of ifc names belong together
@@ -63,5 +63,5 @@ def coherence(words):
 # print(coherence(["IfcWallStandardCase", "IfcGrid"]))
 # print(coherence(["IfcWall", "IfcDoor"]))
 if __name__ == "__main__":
-    print(nearestToWord("concretecastinsitu",5))
-    print(Extrapolate("ifcroof", "defaultroof", "ifcwall"))
+    print(nearestToWord("siding",10))
+    print(Extrapolate("ifcpile", "lightweightconcrete", "ifcrailing"))
