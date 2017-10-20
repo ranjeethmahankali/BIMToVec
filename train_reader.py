@@ -14,25 +14,34 @@ ATOM_EMBED = loadFromFile("savedEmbeddings/atom_embeddings.pkl")
 global_counter = 0
 def next_batch(num):
     global global_counter
-    ws = WORDS[global_counter: global_counter+num]
-    a_batch = []
+    a_batch = None
     w_batch = []
-    for w in ws:
+    i = 0
+    while i < num:
+        w = WORDS[(global_counter+num)%len(WORDS)]
+        global_counter = (global_counter+1)%len(WORDS)
         a_set = []
         for a in ATOMS:
             if a in w and len(a_set) < ATOM_NUM:
                 a_set.append(ATOM_EMBED[ATOM_TO_NUM[a]])
         
+        if len(a_set) == 0:
+            continue
         while len(a_set) < ATOM_NUM:
             a_set += a_set
         
         if len(a_set) > ATOM_NUM:
             a_set = a_set[:ATOM_NUM]
-        
-        a_batch.append(np.reshape(np.array(a_set), [1,-1]))
+
+        arr = np.reshape(np.array(a_set), [1,-1])
+        if a_batch is None:
+            a_batch = arr
+        else:
+            a_batch = np.concatenate([a_batch, arr], axis = 0)
+
         w_batch.append(EMBEDDINGS[WORD_TO_NUM[w]])
-    
-    global_counter = (global_counter+num)%len(WORDS)
+        i += 1
+
     return [a_batch, w_batch]
         
 
@@ -59,11 +68,11 @@ with tf.Session() as sess:
             print("Loss: %s"%_loss)
             if i > 0:
                 saveModel(sess)
-            train_writer.add_summary(summary, i)
+            train_writer.add_summary(_summary, i)
 
-        print("...Training-%s-(%s/%s)-%s\r"%(
-            progress_bar(20, (i%20)+1)),
+        sys.stdout.write("...Training-%s-(%s / %s)-%s\r"%(
+            progress_bar(20, (i%20)+1),
             i, steps,
             estimate_time(startTime, steps, i)
-        )
+        ))
     saveModel(sess)

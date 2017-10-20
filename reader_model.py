@@ -5,9 +5,9 @@ ATOM_SIZE = 32
 WORD_SIZE = 64
 
 def get_placeholders():
-    atoms = tf.placeholder(shape=[None, ATOM_NUM*ATOM_SIZE], dtype = tf.float32)
-    word = tf.placeholder(shape=[None, WORD_SIZE], dtype = tf.float32)
-    keep_prob = tf.placeholder(tf.float32)
+    atoms = tf.placeholder(shape=[None, ATOM_NUM*ATOM_SIZE], dtype = tf.float32, name="atoms")
+    word = tf.placeholder(shape=[None, WORD_SIZE], dtype = tf.float32, name="word")
+    keep_prob = tf.placeholder(tf.float32, name = "keep_prob")
     return [atoms, word, keep_prob]
 
 LAYERS = [ATOM_NUM*ATOM_SIZE, 320, 640, 1280, 512, 256, WORD_SIZE]
@@ -22,11 +22,9 @@ with tf.variable_scope("vars"):
     ]
 
 def reader_model(atoms, keep_prob):
-    atom_flat = tf.reshape(atoms, shape=[1, -1])
-
     h = 0
     for i in range(len(weights)):
-        L = atom_flat if i == 0 else h
+        L = atoms if i == 0 else h
         h = tf.matmul(L, weights[i])+biases[i]
         h = tf.nn.tanh(h) if i == len(weights)-1 else tf.nn.relu(h)
         if i == len(weights)-2:
