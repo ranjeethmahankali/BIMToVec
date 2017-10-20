@@ -20,7 +20,7 @@ beta = 0.1 #momentum
 # coefficient for l2_loss
 alpha = 0.0005
 
-model_save_path = 'savedEmbeddings/conv_reader.ckpt'
+model_save_path = 'savedEmbeddings/reader.ckpt'
 
 # this method saves the model
 def saveModel(sess, savePath = model_save_path, silent = False):
