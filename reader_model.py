@@ -30,7 +30,7 @@ def reader_model(atoms, keep_prob):
         if i == len(weights)-2:
             h = tf.nn.dropout(h, keep_prob)
 
-    norm = tf.sqrt(tf.reduce_sum(tf.square(h), 1, keep_dims=True))
+    norm = tf.sqrt(tf.reduce_sum(tf.square(h), axis=1, keep_dims=True))
     return h/norm
 
 def loss_optim(word_guess, word_true):
@@ -47,6 +47,6 @@ def loss_optim(word_guess, word_true):
 
     tf.summary.scalar("l2_loss", l2_loss)
 
-    optim = tf.train.AdamOptimizer(learning_rate).minimize(loss+l2_loss)
+    optim = tf.train.GradientDescentOptimizer(learning_rate).minimize(loss+l2_loss)
 
     return loss, optim
