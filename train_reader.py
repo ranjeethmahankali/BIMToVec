@@ -50,7 +50,7 @@ steps = 24000
 logStep = steps//100
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
-    #loadModel(sess)
+    loadModel(sess)
     shutil.rmtree(LOG_DIR, ignore_errors=True)
     train_writer, test_writer = getSummaryWriters(sess)
 
