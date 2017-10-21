@@ -45,6 +45,8 @@ def loss_optim(word_guess, word_true):
     for v in vars:
         l2_loss += alpha*tf.nn.l2_loss(v)
 
+    tf.summary.scalar("l2_loss", l2_loss)
+
     optim = tf.train.AdamOptimizer(learning_rate).minimize(loss+l2_loss)
 
     return loss, optim
