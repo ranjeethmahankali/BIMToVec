@@ -19,6 +19,7 @@ learning_rate = 1e-4
 beta = 0.1 #momentum
 # coefficient for l2_loss
 alpha = 0.001
+lrelu_alpha = 0.1
 
 model_save_path = 'savedEmbeddings/reader.ckpt'
 
@@ -59,6 +60,9 @@ def conv3d(x, W, strides = [1,2,2,1,1]):
 # deconv layer
 def deConv3d(y, w, outShape, strides=[1,2,2,2,1]):
     return tf.nn.conv3d_transpose(y, w, output_shape = outShape, strides=strides, padding='SAME')
+
+def lrelu(x, f = lrelu_alpha):
+    return tf.nn.relu(x) - f*tf.nn.relu(-x)
 
 # this is max-pooling for 3d convolutional layers
 def max_pool2x2x1(x):

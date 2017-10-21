@@ -26,11 +26,12 @@ def reader_model(atoms, keep_prob):
     for i in range(len(weights)):
         L = atoms if i == 0 else h
         h = tf.matmul(L, weights[i])+biases[i]
-        h = tf.nn.tanh(h) if i == len(weights)-1 else tf.nn.relu(h)
+        h = tf.nn.tanh(h) if i == len(weights)-1 else lrelu(h)
         if i == len(weights)-2:
             h = tf.nn.dropout(h, keep_prob)
-    
-    return h
+
+    norm = tf.sqrt(tf.reduce_sum(tf.square(h), 1, keep_dims=True))
+    return h/norm
 
 def loss_optim(word_guess, word_true):
     similarity = tf.matmul(word_true, tf.transpose(word_guess))
