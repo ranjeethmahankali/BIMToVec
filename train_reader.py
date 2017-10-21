@@ -46,7 +46,7 @@ def next_batch(num):
         
 
 merged_summary = tf.summary.merge_all()
-steps = 12000
+steps = 24000
 logStep = steps//100
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
