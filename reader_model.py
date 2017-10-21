@@ -31,7 +31,7 @@ def reader_model(atoms, keep_prob):
             h = tf.nn.dropout(h, keep_prob)
 
     norm = tf.sqrt(tf.reduce_sum(tf.square(h), axis=1, keep_dims=True))
-    return h/norm
+    return (h/norm)
 
 def loss_optim(word_guess, word_true):
     similarity = tf.matmul(word_true, tf.transpose(word_guess))
