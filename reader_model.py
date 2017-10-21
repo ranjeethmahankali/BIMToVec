@@ -34,10 +34,16 @@ def reader_model(atoms, keep_prob):
 
 def loss_optim(word_guess, word_true):
     similarity = tf.matmul(word_true, tf.transpose(word_guess))
-    loss = 1/tf.reduce_sum(tf.diag(similarity))
+    loss = -tf.reduce_sum(tf.diag(similarity))
 
     tf.summary.scalar("loss", loss)
 
-    optim = tf.train.AdamOptimizer(learning_rate).minimize(loss)
+    all_vars = tf.trainable_variables()
+    vars = [v for v in all_vars if 'vars' in v.name]
+    l2_loss = 0
+    for v in vars:
+        l2_loss += alpha*tf.nn.l2_loss(v)
+
+    optim = tf.train.AdamOptimizer(learning_rate).minimize(loss+l2_loss)
 
     return loss, optim
