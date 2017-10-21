@@ -36,7 +36,7 @@ def reader_model(atoms, keep_prob):
 def loss_optim(word_guess, word_true):
     #similarity = tf.matmul(word_true, tf.transpose(word_guess))
     #loss = -tf.reduce_sum(tf.diag(similarity))
-    loss = tf.reduce_sum(tf.abs(word_guess, word_true))
+    loss = tf.reduce_sum(tf.abs(word_guess - word_true))
 
     tf.summary.scalar("loss", loss)
 
