@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Command">    
+    <Assembly>
+      D:\Works\myPrograms\BIMToVec\BIMToVecDotNet\RevitBIMToVec\bin\Debug\RevitBIMToVec.dll
+    </Assembly>
+    <ClientId>6ee5355f-0a50-448e-a1fc-ca3fc5202bf7</ClientId>
+    <Publisher>Ranjeeth Mahankali</Publisher>
+    <FullClassName>RevitBIMToVec.RevitBIMToVec</FullClassName>
+    <Text>RevitBIMToVec</Text>
+    <Name>RevitBIMToVec</Name>
+    <VendorId>Ranjeeth Mahankali</VendorId>
+    <VisibilityMode>AlwaysVisible</VisibilityMode>
+  </AddIn>
+</RevitAddIns>

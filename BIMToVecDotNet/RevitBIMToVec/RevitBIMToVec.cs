@@ -13,7 +13,14 @@ using Autodesk.Revit.Attributes;
 
 namespace RevitBIMToVec
 {
-    public class RevitBIMToVec
+    [TransactionAttribute(TransactionMode.Manual)]
+    [RegenerationAttribute(RegenerationOption.Manual)]
+    public class RevitBIMToVec : IExternalCommand
     {
+        public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
+        {
+            //incomplete
+            throw new NotImplementedException();
+        }
     }
 }
