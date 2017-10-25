@@ -2,7 +2,7 @@
 <RevitAddIns>
   <AddIn Type="Command">    
     <Assembly>
-      D:\Works\myPrograms\BIMToVec\BIMToVecDotNet\RevitBIMToVec\bin\Debug\RevitBIMToVec.dll
+      C:\RevitBIMToVec\RevitBIMToVec.dll
     </Assembly>
     <ClientId>6ee5355f-0a50-448e-a1fc-ca3fc5202bf7</ClientId>
     <Publisher>Ranjeeth Mahankali</Publisher>

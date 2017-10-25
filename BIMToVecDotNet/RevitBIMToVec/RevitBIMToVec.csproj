@@ -56,6 +56,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /s /q /y "$(ProjectDir)RevitBIMToVec.addin" "C:\ProgramData\Autodesk\Revit\Addins\2017\"</PostBuildEvent>
+    <PostBuildEvent>xcopy /s /q /y "$(ProjectDir)RevitBIMToVec.addin" "C:\ProgramData\Autodesk\Revit\Addins\2017\"
+xcopy /s /q /y "$(TargetPath)" "C:\RevitBIMToVec\"</PostBuildEvent>
   </PropertyGroup>
 </Project>
