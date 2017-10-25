@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
-using BIMToVecSampler.Utils;
+using IfcSampler.Utils;
 
 using Xbim.Common.Logging;
 using Xbim.Ifc;
 using Xbim.ModelGeometry.Scene;
 
-namespace BIMToVecSampler.Samplers
+namespace IfcSampler.Samplers
 {
     public abstract class Sampler
     {

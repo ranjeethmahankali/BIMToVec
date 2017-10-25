@@ -8,9 +8,9 @@ using Xbim.Ifc2x3.ProductExtension;
 using Xbim.Ifc2x3.Kernel;
 using Xbim.Ifc;
 
-using BIMToVecSampler.Utils;
+using IfcSampler.Utils;
 
-namespace BIMToVecSampler.Samplers
+namespace IfcSampler.Samplers
 {
     public class SemanticTreeSampler : Sampler
     {

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using System.IO;
 
 using Xbim.Common.Logging;
-using BIMToVecSampler.Samplers;
-using BIMToVecSampler.Utils;
+using IfcSampler.Samplers;
+using IfcSampler.Utils;
 
-namespace BIMToVecSampler
+namespace IfcSampler
 {
     public class Dataset
     {

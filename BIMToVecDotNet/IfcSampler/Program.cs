@@ -8,9 +8,9 @@ using System.Windows.Forms;
 using System.Globalization;
 
 using Xbim.Common.Logging;
-using BIMToVecSampler.Samplers;
+using IfcSampler.Samplers;
 
-namespace BIMToVecSampler
+namespace IfcSampler
 {
     class Program
     {

@@ -8,7 +8,7 @@ using Xbim.Ifc2x3.Kernel;
 using Xbim.Ifc2x3.ProductExtension;
 using Xbim.Ifc2x3.MaterialResource;
 
-namespace BIMToVecSampler.Samplers
+namespace IfcSampler.Samplers
 {
     public class MaterialSampler : Sampler
     {

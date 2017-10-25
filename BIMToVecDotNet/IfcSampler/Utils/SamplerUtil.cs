@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using Xbim.Common.Geometry;
 
 
-namespace BIMToVecSampler.Utils
+namespace IfcSampler.Utils
 {
     public class SamplerUtil
     {
@@ -72,8 +72,12 @@ namespace BIMToVecSampler.Utils
 
         public static string ProcessString(string word)
         {
-            Regex rgx = new Regex("[^a-z0-9]");
+            Regex rgx = new Regex("[^a-z]");
             string result = rgx.Replace(word.ToLower(), "");
+            if(word.ToLower() != result)
+            {
+
+            }
             return result;
         }
 

@@ -9,9 +9,9 @@ using System.Collections.Generic;
 
 using Xbim.Common.Geometry;
 
-using BIMToVecSampler.Utils;
+using IfcSampler.Utils;
 
-namespace BIMToVecSampler.Samplers
+namespace IfcSampler.Samplers
 {
     public class SpatialTreeSampler: Sampler
     {

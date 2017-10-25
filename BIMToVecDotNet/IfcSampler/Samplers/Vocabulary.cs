@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Xbim.Common.Logging;
 
-namespace BIMToVecSampler.Samplers
+namespace IfcSampler.Samplers
 {
     public class Vocabulary : ICollection<string>
     {
