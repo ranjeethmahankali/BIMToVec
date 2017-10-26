@@ -74,19 +74,21 @@ namespace IfcSampler.Utils
         {
             Regex rgx = new Regex("[^a-z]");
             string result = rgx.Replace(word.ToLower(), "");
-            if(word.ToLower() != result)
-            {
-
-            }
             return result;
         }
 
-        public static void ProcessCollection(ref List<string> words)
+        public static List<string> ProcessCollection(List<string> words)
         {
-            for(int i = 0; i < words.Count; i++)
+            List<string> processedWords = new List<string>();
+            foreach(string word in words)
             {
-                words[i] = ProcessString(words[i]);
+                if(word == null) { continue; }
+                string processed = ProcessString(word);
+                if(processed.Length < 3) { continue; }
+                processedWords.Add(processed);
             }
+
+            return processedWords;
         }
     }
 }

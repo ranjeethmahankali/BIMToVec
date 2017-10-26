@@ -26,7 +26,7 @@ namespace IfcSampler.Samplers
         {
             int numCollections = 0;
             Action<List<string>> collectionSampler = (collection) => {
-                SamplerUtil.ProcessCollection(ref collection);
+                collection = SamplerUtil.ProcessCollection(collection);
                 vocabMerger.Invoke(collection);//add the collection to the global vocabulary
                 foreach (string label in collection)
                 {
