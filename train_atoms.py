@@ -42,7 +42,7 @@ with tf.Session() as sess:
     for i in range(steps):
         # batch_labels, batch_targets = process_batch(words_dataset.next_batch(batch_size))
         # print(words_dataset.curFile, words_dataset.c, batch_labels.shape, batch_targets.shape)
-        batch = atoms_dataset.next_batch(100)
+        batch = atoms_dataset.next_batch(batch_size)
         _, lossVal, summary = sess.run([optim, loss, merged_summary], feed_dict={
             train_labels: batch[0], #batch_labels,
             train_targets: batch[1]#batch_targets
