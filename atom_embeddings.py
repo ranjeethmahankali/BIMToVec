@@ -49,7 +49,7 @@ loss = tf.reduce_mean(tf.nn.sampled_softmax_loss(
     num_classes = VOCAB_SIZE,
 ))
 
-tf.summary.scalar("embedding_loss", loss)
+tf.summary.scalar("atom_embed_loss", loss)
 
 optim = tf.train.AdagradOptimizer(1.0).minimize(loss)
 # optim = tf.train.AdamOptimizer(learning_rate).minimize(loss)
