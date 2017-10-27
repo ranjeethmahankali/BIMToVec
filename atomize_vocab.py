@@ -112,7 +112,7 @@ def score_word(word, count):
     score = count*(base**effectiveLength)
     return score
 
-atom_vocab_file = open("data/atom_vocabulary.dat", "w")
+atom_vocab_file = open("data/atoms/vocabulary.dat", "w")
 
 GLOBAL_COUNT = 0
 GLOBAL_ATOMS = set()
