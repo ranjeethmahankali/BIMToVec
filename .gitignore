@@ -20,16 +20,16 @@ train_log/*
 savedEmbeddings/
 savedEmbeddings/*
 
-BIMToVecSampler/BIMToVecSampler/bin/
-BIMToVecSampler/BIMToVecSampler/bin/*
+BIMToVecDotNet/ifcSampler/bin/
+BIMToVecDotNet/IfcSampler/bin/*
 
 XbimDemo/
 XbimDemo/*
 
-BIMToVecSampler/packages/
-BIMToVecSampler/.vs
-BIMToVecSampler/BIMToVecSampler/obj/
-dataGen/BIMToVecSampler/
+BIMToVecDotNet/packages/
+BIMToVecDotNet/.vs
+BIMToVecDotNet/IfcSampler/obj/
+dataGen/IfcSampler/
 
 .vscode/
 .vscode/*
