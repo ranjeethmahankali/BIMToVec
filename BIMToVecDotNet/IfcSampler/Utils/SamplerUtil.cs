@@ -84,7 +84,7 @@ namespace IfcSampler.Utils
             {
                 if(word == null) { continue; }
                 string processed = ProcessString(word);
-                if(processed.Length < 3) { continue; }
+                if(processed.Length < 1) { continue; }
                 processedWords.Add(processed);
             }
 
