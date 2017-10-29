@@ -31,7 +31,7 @@ def get_char_list_vec(word):
 
     return np.reshape(np.array(vec),[1,-1])
 
-LAYERS = [(ATOM_NUM*ATOM_SIZE)+WORD_SAMPLE_SIZE, 320, 640, 1280, 512, 256, WORD_SIZE]
+LAYERS = [(ATOM_NUM*ATOM_SIZE)+WORD_SAMPLE_SIZE, 640, 1280, 1536, 1280, 640, WORD_SIZE]
 
 with tf.variable_scope("vars"):
     weights = [
