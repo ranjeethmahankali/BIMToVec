@@ -79,8 +79,8 @@ TEST_BATCH = make_test_batch()
         
 
 merged_summary = tf.summary.merge_all()
-steps = 100000
-logStep = steps//1000
+steps = 2000
+logStep = steps//20
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
     # loadModel(sess)
@@ -94,7 +94,7 @@ with tf.Session() as sess:
         feed_dict={
             atoms: batch[0],
             word_true: batch[1],
-            keep_prob: 0.75
+            keep_prob: 0.9
         })
 
         if i % logStep == 0:
