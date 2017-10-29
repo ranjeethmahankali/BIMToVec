@@ -16,7 +16,7 @@ def atoms_in_word(word):
             atom_embeddings.append(ATOM_EMBED[ATOM_TO_NUM[atom]])
 
     if len(atom_embeddings) == 0:
-        return np.zeros([1,ATOM_NUM*ATOM_SIZE])
+        return np.zeros([1,(ATOM_NUM*ATOM_SIZE)+(WORD_SAMPLE_SIZE)])
 
     while len(atom_embeddings) < ATOM_NUM:
         atom_embeddings += atom_embeddings

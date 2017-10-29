@@ -4,7 +4,7 @@ import random
 ATOM_NUM = 5
 ATOM_SIZE = 32
 WORD_SIZE = 64
-WORD_SAMPLE_SIZE = 6
+WORD_SAMPLE_SIZE = 20
 
 ALPHABET = list("abcdefghijklmnopqrstuvwxyz")
 
