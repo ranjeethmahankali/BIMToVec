@@ -1,16 +1,37 @@
 from ops import *
+import random
 
 ATOM_NUM = 5
 ATOM_SIZE = 32
 WORD_SIZE = 64
+WORD_SAMPLE_SIZE = 6
+
+ALPHABET = list("abcdefghijklmnopqrstuvwxyz")
 
 def get_placeholders():
-    atoms = tf.placeholder(shape=[None, ATOM_NUM*ATOM_SIZE], dtype = tf.float32, name="atoms")
+    atoms = tf.placeholder(shape=[None, (ATOM_NUM*ATOM_SIZE)+WORD_SAMPLE_SIZE], dtype = tf.float32, name="atoms")
     word = tf.placeholder(shape=[None, WORD_SIZE], dtype = tf.float32, name="word")
     keep_prob = tf.placeholder(tf.float32, name = "keep_prob")
     return [atoms, word, keep_prob]
 
-LAYERS = [ATOM_NUM*ATOM_SIZE, 320, 640, 1280, 512, 256, WORD_SIZE]
+def get_char_list_vec(word):
+    chars = ""
+    if len(word) < WORD_SAMPLE_SIZE:
+        while len(chars) < WORD_SAMPLE_SIZE:
+            chars += word
+        if len(chars) > WORD_SAMPLE_SIZE:
+            chars = chars[:WORD_SAMPLE_SIZE]
+            # print(chars)
+    else:
+        chars = random.sample(list(word), WORD_SAMPLE_SIZE)
+
+    vec = []
+    for ch in chars:
+        vec += [(ALPHABET.index(ch)+1)/len(ALPHABET)]
+
+    return np.reshape(np.array(vec),[1,-1])
+
+LAYERS = [(ATOM_NUM*ATOM_SIZE)+WORD_SAMPLE_SIZE, 320, 640, 1280, 512, 256, WORD_SIZE]
 
 with tf.variable_scope("vars"):
     weights = [

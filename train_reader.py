@@ -33,7 +33,7 @@ def prepare_word(w):
         a_set = a_set[:ATOM_NUM]
 
     arr = np.reshape(np.array(a_set), [1, -1])
-    return [arr,EMBEDDINGS[WORD_TO_NUM[w]]]
+    return [np.concatenate([arr, get_char_list_vec(w)], axis = 1), EMBEDDINGS[WORD_TO_NUM[w]]]
 
 global_counter = 0
 def next_batch(num):
