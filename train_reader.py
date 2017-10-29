@@ -4,8 +4,8 @@ import shutil
 import random
 
 atoms, word_true, keep_prob = get_placeholders()
-word_predict = reader_model(atoms, keep_prob)
-loss, optim = loss_optim(word_predict, word_true)
+similarity, pred_word_index = reader_model(atoms, keep_prob)
+loss, optim, accuracy = loss_optim(w_index_true=word_true, similarity_predict=similarity)
 
 WORDS, WORD_TO_NUM = getAllWords()
 ATOMS, ATOM_TO_NUM = getAllAtoms()
@@ -33,7 +33,7 @@ def prepare_word(w):
         a_set = a_set[:ATOM_NUM]
 
     arr = np.reshape(np.array(a_set), [1, -1])
-    return [np.concatenate([arr, get_char_list_vec(w)], axis = 1), EMBEDDINGS[WORD_TO_NUM[w]]]
+    return [np.concatenate([arr, get_char_list_vec(w)], axis = 1), WORD_TO_NUM[w]]
 
 global_counter = 0
 def next_batch(num):
@@ -79,8 +79,8 @@ TEST_BATCH = make_test_batch()
         
 
 merged_summary = tf.summary.merge_all()
-steps = 2000
-logStep = steps//20
+steps = 100000
+logStep = steps//1000
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
     # loadModel(sess)
@@ -90,7 +90,8 @@ with tf.Session() as sess:
     startTime = time.time()
     for i in range(steps):
         batch = next_batch(batch_size)
-        _, _loss, _summary = sess.run([optim, loss, merged_summary],
+        _, _loss, _acc, _pred, _summary = sess.run([optim, loss, accuracy, pred_word_index,
+                                             merged_summary],
         feed_dict={
             atoms: batch[0],
             word_true: batch[1],
@@ -98,7 +99,8 @@ with tf.Session() as sess:
         })
 
         if i % logStep == 0:
-            print("Loss: %s"%_loss)
+            # print(batch[1], _pred)
+            print("Loss: %s; Acc: %.2f"%(_loss, _acc))
             if i > 0:
                 saveModel(sess, silent=True)
             train_writer.add_summary(_summary, i)

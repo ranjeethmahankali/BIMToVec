@@ -6,7 +6,6 @@ word_predict = reader_model(atoms, keep_prob)
 loss, optim = loss_optim(word_predict, word_true)
 
 ATOMS, ATOM_TO_NUM = getAllAtoms()
-EMBEDDINGS = loadFromFile("savedEmbeddings/embeddings.pkl")
 ATOM_EMBED = loadFromFile("savedEmbeddings/atom_embeddings.pkl")
 
 def atoms_in_word(word):
