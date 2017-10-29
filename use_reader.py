@@ -24,7 +24,7 @@ def atoms_in_word(word):
     if len(atom_embeddings) > ATOM_NUM:
         atom_embeddings = atom_embeddings[:ATOM_NUM]
 
-    return np.reshape(np.array(atom_embeddings), [1,-1])
+    return np.concatenate([np.reshape(np.array(atom_embeddings), [1,-1]), get_char_list_vec(word)], axis=1)
 
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
