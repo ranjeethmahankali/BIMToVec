@@ -35,7 +35,7 @@ def get_char_list_vec(word):
 
     return np.reshape(np.array(vec),[1,-1])
 
-LAYERS = [(ATOM_NUM*ATOM_SIZE)+WORD_SAMPLE_SIZE, 1280, 640, 640, 1280, WORD_SIZE]
+LAYERS = [(ATOM_NUM*ATOM_SIZE)+WORD_SAMPLE_SIZE, 640, 1280, 1536, 1280, 640, WORD_SIZE]
 
 with tf.variable_scope("vars"):
     weights = [
@@ -51,7 +51,7 @@ def reader_model(atoms, keep_prob):
     for i in range(len(weights)):
         L = atoms if i == 0 else h
         h = tf.matmul(L, weights[i])+biases[i]
-        h = tf.nn.tanh(h) if i == len(weights)-1 else lrelu(h)
+        h = tf.nn.tanh(h) if i == len(weights)-1 else tf.nn.relu(h)
         if i == len(weights)-2:
             h = tf.nn.dropout(h, keep_prob)
 
@@ -83,10 +83,10 @@ def loss_optim(w_index_true, similarity_predict):
 
     tf.summary.scalar("l2_loss", l2_loss)
 
-    optim = tf.train.AdamOptimizer(learning_rate).minimize(cross_entropy+l2_loss)
-
     prediction = tf.argmax(similarity_predict, axis=1)
     # pred_word_index = tf.nn.embedding_lookup(EMBEDDING_TENSOR, prediction)
     accuracy = 100*tf.reduce_mean(tf.cast(tf.equal(prediction, w_index_true),tf.float32))
+    # optim = tf.train.AdamOptimizer(learning_rate).minimize(cross_entropy+l2_loss-accuracy)
+    optim = tf.train.GradientDescentOptimizer(0.1).minimize(cross_entropy+l2_loss-accuracy)
 
     return cross_entropy, optim, accuracy

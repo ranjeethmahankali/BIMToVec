@@ -15,11 +15,11 @@ resDir = 'results/'
 LOG_DIR = "train_log/"
 
 # learning_rate = 1.0
-learning_rate = 1e-5
+learning_rate = 1e-4
 beta = 0.1 #momentum
 # coefficient for l2_loss
 alpha = 0.001
-lrelu_alpha = 0.15
+lrelu_alpha = 0.1
 
 model_save_path = 'savedEmbeddings/reader.ckpt'
 

@@ -95,7 +95,7 @@ with tf.Session() as sess:
         feed_dict={
             atoms: batch[0],
             word_true: batch[1],
-            keep_prob: 0.9
+            keep_prob: 1.0
         })
 
         if i % logStep == 0:
