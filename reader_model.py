@@ -39,7 +39,6 @@ with tf.variable_scope("vars"):
         biasVariable([LAYERS[i+1]], name="b%s"%i) for i in range(len(LAYERS)-1)
     ]
 
-
 atoms_placeholder = tf.placeholder(shape=[None, (ATOM_NUM*ATOM_SIZE)+WORD_SAMPLE_SIZE],
                        dtype = tf.float32, name="atoms")
 word_true = tf.placeholder(shape=[None], dtype = tf.int64, name="word_true_index")

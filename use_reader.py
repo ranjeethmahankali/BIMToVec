@@ -2,8 +2,7 @@ from reader_model import *
 from embeddingCalc import *
 
 atoms, word_true, keep_prob = get_placeholders()
-word_predict = reader_model(atoms, keep_prob)
-loss, optim = loss_optim(word_predict, word_true)
+similarity, prediction = reader_model(atoms, keep_prob)
 
 ATOMS, ATOM_TO_NUM = getAllAtoms()
 ATOM_EMBED = loadFromFile("savedEmbeddings/atom_embeddings.pkl")
@@ -31,9 +30,9 @@ with tf.Session() as sess:
     while True:
         _word = input("Enter word: ")
         embed_atoms = atoms_in_word(_word)
-        result_embed = sess.run(word_predict, feed_dict={
+        result = sess.run(prediction, feed_dict={
             atoms: embed_atoms,
             keep_prob:1.0
         })
-        interpretation = toEnglish(result_embed)
+        interpretation = WORDS[result[0]]
         print(interpretation)
