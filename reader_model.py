@@ -87,6 +87,6 @@ def loss_optim(w_index_true, similarity_predict):
     # pred_word_index = tf.nn.embedding_lookup(EMBEDDING_TENSOR, prediction)
     accuracy = 100*tf.reduce_mean(tf.cast(tf.equal(prediction, w_index_true),tf.float32))
     # optim = tf.train.AdamOptimizer(learning_rate).minimize(cross_entropy+l2_loss-accuracy)
-    optim = tf.train.GradientDescentOptimizer(0.1).minimize(cross_entropy+l2_loss-accuracy)
+    optim = tf.train.GradientDescentOptimizer(0.1).minimize(cross_entropy-accuracy)
 
     return cross_entropy, optim, accuracy
