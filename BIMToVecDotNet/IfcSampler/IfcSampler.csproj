@@ -169,10 +169,8 @@
     <Error Condition="!Exists('..\packages\Xbim.Geometry.4.0.11\build\Xbim.Geometry.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Xbim.Geometry.4.0.11\build\Xbim.Geometry.targets'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>rmdir /s /q "$(SolutionDir)..\dataGen\IfcSampler"
-rmdir "$(SolutionDir)..\dataGen\IfcSampler"
-
-xcopy /s /e /y "$(TargetDir)*" "$(SolutionDir)..\dataGen\IfcSampler\"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
