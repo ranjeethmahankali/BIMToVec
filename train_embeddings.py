@@ -27,7 +27,7 @@ def plot(embeddings, WORDS):
 words_dataset = dataset("data/")
 # dataset size: 668,597,822
 # training
-steps = int(6e6)
+steps = int(6.5e6)
 logStep = 50000
 with tf.Session() as sess:
     tf.global_variables_initializer().run()

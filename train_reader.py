@@ -3,10 +3,6 @@ import sys
 import shutil
 import random
 
-atoms, word_true, keep_prob = get_placeholders()
-similarity, pred_word_index = reader_model(atoms, keep_prob)
-loss, optim, accuracy = loss_optim(w_index_true=word_true, similarity_predict=similarity)
-
 WORDS, WORD_TO_NUM = getAllWords()
 ATOMS, ATOM_TO_NUM = getAllAtoms()
 
@@ -90,10 +86,10 @@ with tf.Session() as sess:
     startTime = time.time()
     for i in range(steps):
         batch = next_batch(batch_size)
-        _, _loss, _acc, _pred, _summary = sess.run([optim, loss, accuracy, pred_word_index,
+        _, _loss, _acc, _pred, _summary = sess.run([optim, cross_entropy, accuracy, prediction,
                                              merged_summary],
         feed_dict={
-            atoms: batch[0],
+            atoms_placeholder: batch[0],
             word_true: batch[1],
             keep_prob: 1.0
         })
@@ -106,8 +102,8 @@ with tf.Session() as sess:
             train_writer.add_summary(_summary, i)
 
         if i % (2*logStep) == 0:
-            _loss, _summary = sess.run([loss, merged_summary], feed_dict={
-                atoms: TEST_BATCH[0],
+            _loss, _summary = sess.run([cross_entropy, merged_summary], feed_dict={
+                atoms_placeholder: TEST_BATCH[0],
                 word_true:TEST_BATCH[1],
                 keep_prob:1.0
             })
