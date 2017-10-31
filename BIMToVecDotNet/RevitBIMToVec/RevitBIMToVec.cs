@@ -24,21 +24,14 @@ namespace RevitBIMToVec
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             string msg = "this is my message, I am Ranjeeth.";
-            TcpClient clientSocket = new TcpClient();
-            clientSocket.Connect("127.0.0.1", 15555);
-            using(BinaryWriter writer = new BinaryWriter(clientSocket.GetStream()))
-            {
-                writer.Write(System.Text.Encoding.ASCII.GetBytes(msg));
-            }
-
-            TcpListener listener = new TcpListener(IPAddress.Parse("127.0.0.1"), 15556);
-            listener.Start();
-            TcpClient client = listener.AcceptTcpClient();
-            NetworkStream nwStr = client.GetStream();
-            byte[] received = new byte[client.ReceiveBufferSize];
-            int bytesRead = nwStr.Read(received, 0, client.ReceiveBufferSize);
-            string resp = Encoding.ASCII.GetString(received,0,bytesRead);
-
+            //ask user to select a bunch of items
+            //get their material names, and ifc names
+            //serialize the data into a string
+            //send the data
+            //receive the inference back from the server
+            //deserialize the received inference appropriately
+            //display a message window to show the user that inference.
+            //incomplete
             return Result.Succeeded;
         }
     }

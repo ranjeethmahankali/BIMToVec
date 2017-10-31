@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="RevitBIMToVec.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RevitClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="RevitBIMToVec.addin" />
