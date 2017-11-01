@@ -1,23 +1,31 @@
 import socket
+from reader_model import *
 
-port=15555
-host = "127.0.0.1"
-incomingSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-incomingSocket.bind((host, port))
+INCOMING_PORT=15555
+HOST = "127.0.0.1"
+OUTGOING_PORT = 15556
 
-incomingSocket.listen(5)
-# while True:
-client, addr = incomingSocket.accept()
-print("Connection established to {}".format(addr))
-data = client.recv(1024)
-client.close()
+def ListenAndReturnData():
+    incomingSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    incomingSocket.bind((HOST, INCOMING_PORT))
 
-msg = data.decode("ascii")
-print("message: %s"%msg)
+    incomingSocket.listen(5)
+    # while True:
+    print("Now listening for the revit client...")
+    client, addr = incomingSocket.accept()
+    print("Connection established to {}".format(addr))
+    data = client.recv(1024)
+    client.close()
+    incomingSocket.close()
+    return data.decode("ascii")
 
+def SendData(strData):
+    outgoingSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    outgoingSocket.connect((HOST, OUTGOING_PORT))
+    outgoingSocket.send(bytes(strData,"ascii"))
+    outgoingSocket.close()
 
-reply = "I am the python server, here for your tensorflow needs."
-outgoingSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-outgoingSocket.connect(("127.0.0.1", 15556))
-outgoingSocket.send(bytes(reply,"ascii"))
-outgoingSocket.close()
+if __name__ == "__main__":
+    msg = ListenAndReturnData()
+    print("received: %s"%msg)
+    SendData("I am the python server, here for your tensorflow needs.")

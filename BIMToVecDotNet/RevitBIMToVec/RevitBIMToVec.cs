@@ -24,6 +24,15 @@ namespace RevitBIMToVec
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             string msg = "this is my message, I am Ranjeeth.";
+            RevitClient.StartPythonServer();
+            RevitClient.SendData(msg);
+            string response = RevitClient.ListenAndReturnData();
+
+            TaskDialog box = new TaskDialog("Python Server");
+            box.MainInstruction = "Hi Revit Client !";
+            box.MainContent = "I am ready to serve python utilities including tensorflow.";
+            box.Show();
+            //RevitClient.SendData(msg);
             //ask user to select a bunch of items
             //get their material names, and ifc names
             //serialize the data into a string

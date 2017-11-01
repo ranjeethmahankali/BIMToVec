@@ -60,4 +60,11 @@
     <PostBuildEvent>xcopy /s /q /y "$(ProjectDir)RevitBIMToVec.addin" "C:\ProgramData\Autodesk\Revit\Addins\2017\"
 xcopy /s /q /y "$(TargetPath)" "C:\RevitBIMToVec\"</PostBuildEvent>
   </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>del /q "C:\RevitBIMToVec\*"
+mkdir C:\RevitBIMToVec\savedEmbeddings
+
+xcopy /q /y "$(SolutionDir)..\*.py" "C:\RevitBIMToVec"
+xcopy /y /q $(SolutionDir)..\savedEmbeddings\* C:\RevitBIMToVec\savedEmbeddings</PreBuildEvent>
+  </PropertyGroup>
 </Project>
