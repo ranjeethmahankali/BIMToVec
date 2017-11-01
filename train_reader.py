@@ -8,7 +8,7 @@ ATOMS, ATOM_TO_NUM = getAllAtoms()
 
 TEST_WORDS = random.sample(WORDS, batch_size)
 
-TRAIN_WORDS = [w for w in WORDS if not w in TEST_WORDS]
+TRAIN_WORDS = [w for w in WORDS if True]#not w in TEST_WORDS]
 
 
 EMBEDDINGS = loadFromFile("savedEmbeddings/embeddings.pkl")
