@@ -14,7 +14,7 @@ def normalize(vector):
 def nearest(testEmbedding,numNearest = 1, skipFirst = True):
     similarity = np.matmul(testEmbedding, np.transpose(EMBEDDINGS))
     k = 1 if skipFirst else 0
-    matches = (-similarity).argsort()[0,k:numNearest+k]
+    matches = (-similarity).argsort()[k:numNearest+k]
     # print(matches.shape)
     matchWords = []
     # print(matches.shape)
@@ -63,5 +63,9 @@ def coherence(words):
 # print(coherence(["IfcWallStandardCase", "IfcGrid"]))
 # print(coherence(["IfcWall", "IfcDoor"]))
 if __name__ == "__main__":
-    print(nearestToWord("siding",10))
-    print(Extrapolate("ifcpile", "lightweightconcrete", "ifcrailing"))
+    while True:
+        word = input("Enter word: ")
+        matches = nearestToWord(word,10)
+        for m in matches:
+            print(" - " +m)
+    # print(Extrapolate("ifcpile", "concreteprecastconcretenormalweightksi", "ifcstair"))
