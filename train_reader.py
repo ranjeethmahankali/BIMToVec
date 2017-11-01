@@ -75,8 +75,8 @@ TEST_BATCH = make_test_batch()
         
 
 merged_summary = tf.summary.merge_all()
-steps = 100000
-logStep = steps//1000
+steps = 3210
+logStep = steps//32
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
     # loadModel(sess)
