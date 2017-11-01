@@ -63,8 +63,10 @@ similarity = tf.matmul(embed_true, tf.transpose(EMBEDDING_TENSOR))
 sim_norm = (1+similarity)/2
 
 cross_entropy = tf.reduce_mean(-tf.reduce_sum(sim_norm * tf.log(sim_predict_norm), 1))
+diff_loss = tf.reduce_mean(tf.reduce_sum(tf.square(embed_predict-embed_true)))
 
-tf.summary.scalar("loss", cross_entropy)
+# tf.summary.scalar("cross_entropy", cross_entropy)
+tf.summary.scalar("diff_loss", cross_entropy)
 
 # all_vars = tf.trainable_variables()
 # vars = [v for v in all_vars if 'vars' in v.name]
@@ -77,4 +79,6 @@ tf.summary.scalar("loss", cross_entropy)
 # pred_word_index = tf.nn.embedding_lookup(EMBEDDING_TENSOR, prediction)
 accuracy = 100*tf.reduce_mean(tf.cast(tf.equal(prediction, word_true),tf.float32))
 # optim = tf.train.AdamOptimizer(learning_rate).minimize(cross_entropy+l2_loss-accuracy)
-optim = tf.train.GradientDescentOptimizer(0.1).minimize(cross_entropy-accuracy)
+# optim = tf.train.GradientDescentOptimizer(0.1).minimize(cross_entropy-accuracy)
+# optim = tf.train.AdamOptimizer(learning_rate).minimize(cross_entropy+l2_loss-accuracy)
+optim = tf.train.GradientDescentOptimizer(0.1).minimize(diff_loss -accuracy)
