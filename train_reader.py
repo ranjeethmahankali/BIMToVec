@@ -86,7 +86,7 @@ with tf.Session() as sess:
     startTime = time.time()
     for i in range(steps):
         batch = next_batch(batch_size)
-        _, _loss, _acc, _pred, _summary = sess.run([optim, cross_entropy, accuracy, prediction,
+        _, _loss, _acc, _pred, _summary = sess.run([optim, diff_loss, accuracy, prediction,
                                              merged_summary],
         feed_dict={
             atoms_placeholder: batch[0],
