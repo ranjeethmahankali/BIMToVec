@@ -81,4 +81,4 @@ accuracy = 100*tf.reduce_mean(tf.cast(tf.equal(prediction, word_true),tf.float32
 # optim = tf.train.AdamOptimizer(learning_rate).minimize(cross_entropy+l2_loss-accuracy)
 # optim = tf.train.GradientDescentOptimizer(0.1).minimize(cross_entropy-accuracy)
 # optim = tf.train.AdamOptimizer(learning_rate).minimize(cross_entropy+l2_loss-accuracy)
-optim = tf.train.AdamOptimizer(0.1).minimize(diff_loss -accuracy)
+optim = tf.train.AdamOptimizer(learning_rate).minimize(diff_loss -accuracy)
