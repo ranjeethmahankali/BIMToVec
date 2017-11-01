@@ -13,8 +13,8 @@ namespace RevitBIMToVec
     public class RevitClient
     {
         private static string _host = "127.0.0.1";
-        private static int _outgoingPort = 15555;
-        private static int _incomingPort = 15556;
+        private static int _outgoingPort = 5006;
+        private static int _incomingPort = 5007;
         public static string _baseDir = @"C:\RevitBIMToVec";
         public static string _pythonServerFile = "model_server.py";
 

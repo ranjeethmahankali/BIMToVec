@@ -1,9 +1,9 @@
 import socket
 from reader_model import *
 
-INCOMING_PORT=15555
+INCOMING_PORT=5006
 HOST = "127.0.0.1"
-OUTGOING_PORT = 15556
+OUTGOING_PORT = 5007
 
 def ListenAndReturnData():
     incomingSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

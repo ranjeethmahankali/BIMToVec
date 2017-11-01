@@ -25,6 +25,7 @@ namespace RevitBIMToVec
         {
             string msg = "this is my message, I am Ranjeeth.";
             RevitClient.StartPythonServer();
+            System.Threading.Thread.Sleep(5000);
             RevitClient.SendData(msg);
             string response = RevitClient.ListenAndReturnData();
 
