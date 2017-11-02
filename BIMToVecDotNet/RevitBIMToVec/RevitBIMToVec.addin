@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RevitAddIns>
-  <AddIn Type="Command">    
+  <AddIn Type="Application">    
     <Assembly>
       C:\RevitBIMToVec\RevitBIMToVec.dll
     </Assembly>
@@ -10,6 +10,7 @@
     <Text>RevitBIMToVec</Text>
     <Name>RevitBIMToVec</Name>
     <VendorId>Ranjeeth Mahankali</VendorId>
+    <VendorDescription>MS Design Computing Student at University of Washington</VendorDescription>
     <VisibilityMode>AlwaysVisible</VisibilityMode>
   </AddIn>
 </RevitAddIns>

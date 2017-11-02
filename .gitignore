@@ -279,3 +279,4 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+/BIMToVecDotNet/RevitBIMToVec/Resources

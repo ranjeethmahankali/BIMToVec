@@ -30,6 +30,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
     <Reference Include="RevitAPI">
       <HintPath>C:\Program Files\Autodesk\Revit 2017\RevitAPI.dll</HintPath>
       <Private>False</Private>
@@ -51,6 +52,7 @@
     <Compile Include="RevitBIMToVec.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RevitClient.cs" />
+    <Compile Include="RunInference.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="RevitBIMToVec.addin" />
@@ -63,8 +65,12 @@ xcopy /s /q /y "$(TargetPath)" "C:\RevitBIMToVec\"</PostBuildEvent>
   <PropertyGroup>
     <PreBuildEvent>del /q "C:\RevitBIMToVec\*"
 mkdir C:\RevitBIMToVec\savedEmbeddings
+mkdir C:\RevitBIMToVec\data
 
 xcopy /q /y "$(SolutionDir)..\*.py" "C:\RevitBIMToVec"
-xcopy /y /q $(SolutionDir)..\savedEmbeddings\* C:\RevitBIMToVec\savedEmbeddings</PreBuildEvent>
+xcopy /y /q $(SolutionDir)..\savedEmbeddings\* C:\RevitBIMToVec\savedEmbeddings
+xcopy /y /q "$(SolutionDir)..\data\vocabulary.dat" "C:\RevitBIMToVec\data"
+
+xcopy /y /q "$(ProjectDir)Resources\RevitBIMToVecLogo.png" "C:\RevitBIMToVec"</PreBuildEvent>
   </PropertyGroup>
 </Project>

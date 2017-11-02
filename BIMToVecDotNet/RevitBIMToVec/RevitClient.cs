@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.IO;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace RevitBIMToVec
 {
@@ -17,6 +18,25 @@ namespace RevitBIMToVec
         private static int _incomingPort = 5007;
         public static string _baseDir = @"C:\RevitBIMToVec";
         public static string _pythonServerFile = "model_server.py";
+        private static Process _pythonServer;
+        private static bool _pythonServerActive = false;
+
+        public static bool PythonServerActive
+        {
+            get { return _pythonServerActive; }
+            set { _pythonServerActive = false; }
+        }
+
+        static RevitClient()
+        {
+            string command = "python " + _pythonServerFile;
+            _pythonServer = new Process();
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.WorkingDirectory = _baseDir;
+            startInfo.FileName = "cmd.exe";
+            startInfo.Arguments = "/C " + command;
+            _pythonServer.StartInfo = startInfo;
+        }
 
         public static void SendData(string data)
         {
@@ -26,6 +46,7 @@ namespace RevitBIMToVec
             {
                 writer.Write(Encoding.ASCII.GetBytes(data));
             }
+            clientSocket.Close();
         }
 
         public static string ListenAndReturnData()
@@ -46,15 +67,23 @@ namespace RevitBIMToVec
         public static void StartPythonServer(bool returnOutput = false,
             Action<string> stdoutProcessor = null, Action<string> stderrProcessor = null)
         {
-            string command = "python " + _pythonServerFile;
-            System.Diagnostics.Process process = new System.Diagnostics.Process();
-            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-            startInfo.WorkingDirectory = _baseDir;
-            startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = "/C " + command;
-            //startInfo.CreateNoWindow = true;
-            process.StartInfo = startInfo;
-            process.Start();
+            if (_pythonServerActive) { return; }
+            _pythonServer.Start();
+            _pythonServerActive = true;
         }
+
+        public static void StopPythonServer()
+        {
+            if (!_pythonServerActive) { return; }
+            SendData(SpecialTokens.STOP_PYTHON_SERVER);
+            _pythonServer.WaitForExit();
+            _pythonServer.Close();
+            _pythonServerActive = false;
+        }
+    }
+
+    public static class SpecialTokens
+    {
+        public const string STOP_PYTHON_SERVER = "stop_server_498994a4-24a1-4496-9a41-3e6f907d0ffa";
     }
 }
