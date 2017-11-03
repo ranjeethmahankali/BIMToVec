@@ -39,7 +39,14 @@ def ProcessInput(data):
         SPECIAL_TOKEN[data]()
         return
 
-    return "I am the python server, here for your tensorflow needs."
+    words = data.split(" ")
+    if len(words) == 0:
+        return "None"
+
+    for w in words:
+        print(w)
+
+    return oddOneOut(words)
 
 if __name__ == "__main__":
     print("Server started...")
