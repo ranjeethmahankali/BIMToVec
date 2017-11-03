@@ -10,6 +10,8 @@ using Autodesk.Revit.UI;
 using Autodesk.Revit.UI.Selection;
 using Autodesk.Revit.ApplicationServices;
 using Autodesk.Revit.Attributes;
+using Autodesk.Revit.DB.IFC;
+using Autodesk.Revit.DB.ExternalService;
 
 namespace RevitBIMToVec
 {
@@ -17,9 +19,22 @@ namespace RevitBIMToVec
     [RegenerationAttribute(RegenerationOption.Manual)]
     public class RunInference : IExternalCommand
     {
+        private List<Element> _pickedElements = new List<Element>();
+        private List<string> _ifcNames = new List<string>();
+ 
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-            string msg = "this is my message, I am Ranjeeth.";
+            UIApplication uiApp = commandData.Application;
+            Document doc = uiApp.ActiveUIDocument.Document;
+            Selection sel = uiApp.ActiveUIDocument.Selection;
+            List<Reference> picked = sel.PickObjects(ObjectType.Element, "Select the objects that you want to group").ToList();
+
+            foreach(var objRef in picked)
+            {
+                _pickedElements.Add(doc.GetElement(objRef));
+            }
+
+            string msg = "ifcdoor ifcstair ifcsite";
             RevitClient.SendData(msg);
             string response = RevitClient.ListenAndReturnData();
 

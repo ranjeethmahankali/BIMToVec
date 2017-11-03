@@ -71,6 +71,7 @@ xcopy /q /y "$(SolutionDir)..\*.py" "C:\RevitBIMToVec"
 xcopy /y /q $(SolutionDir)..\savedEmbeddings\* C:\RevitBIMToVec\savedEmbeddings
 xcopy /y /q "$(SolutionDir)..\data\vocabulary.dat" "C:\RevitBIMToVec\data"
 
-xcopy /y /q "$(ProjectDir)Resources\RevitBIMToVecLogo.png" "C:\RevitBIMToVec"</PreBuildEvent>
+xcopy /y /q "$(ProjectDir)Resources\*.png" "C:\RevitBIMToVec"
+xcopy /y /q "$(ProjectDir)Resources\*.txt" "C:\RevitBIMToVec"</PreBuildEvent>
   </PropertyGroup>
 </Project>
