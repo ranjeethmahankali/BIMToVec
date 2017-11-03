@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 using Autodesk.Revit.DB;
@@ -19,9 +20,13 @@ namespace RevitBIMToVec
     [RegenerationAttribute(RegenerationOption.Manual)]
     public class RunInference : IExternalCommand
     {
-        private List<Element> _pickedElements = new List<Element>();
-        private List<string> _ifcNames = new List<string>();
- 
+        public static string ProcessString(string word)
+        {
+            Regex rgx = new Regex("[^a-z]");
+            string result = rgx.Replace(word.ToLower(), "");
+            return result;
+        }
+
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
             UIApplication uiApp = commandData.Application;
@@ -29,18 +34,31 @@ namespace RevitBIMToVec
             Selection sel = uiApp.ActiveUIDocument.Selection;
             List<Reference> picked = sel.PickObjects(ObjectType.Element, "Select the objects that you want to group").ToList();
 
+            List<string> matNames = new List<string>();
             foreach(var objRef in picked)
             {
-                _pickedElements.Add(doc.GetElement(objRef));
+                Element elem = doc.GetElement(objRef);
+                var matIds = elem.GetMaterialIds(true);
+                foreach( var id in matIds)
+                {
+                    string word = ProcessString(doc.GetElement(id).Name);
+                    if (word == "") { continue; }
+                    matNames.Add(word);
+                }
             }
 
-            string msg = "ifcdoor ifcstair ifcsite";
+            string msg = String.Join(" ", matNames.ToArray());
             RevitClient.SendData(msg);
             string response = RevitClient.ListenAndReturnData();
 
+            if (SpecialToken.MatchAndExecuteToken(response))
+            {
+                return Result.Succeeded;
+            }
+
             TaskDialog box = new TaskDialog("Python Server");
-            box.MainInstruction = "Hi Revit Client !";
-            box.MainContent = "I am ready to serve python utilities including tensorflow.";
+            box.MainInstruction = "Odd one out: ";
+            box.MainContent = response;
             box.Show();
             //RevitClient.SendData(msg);
             //ask user to select a bunch of items

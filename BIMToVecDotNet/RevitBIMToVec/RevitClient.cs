@@ -75,15 +75,10 @@ namespace RevitBIMToVec
         public static void StopPythonServer()
         {
             if (!_pythonServerActive) { return; }
-            SendData(SpecialTokens.STOP_PYTHON_SERVER);
+            SendData(OutgoingToken.STOP_SERVER);
             _pythonServer.WaitForExit();
             _pythonServer.Close();
             _pythonServerActive = false;
         }
-    }
-
-    public static class SpecialTokens
-    {
-        public const string STOP_PYTHON_SERVER = "stop_server_498994a4-24a1-4496-9a41-3e6f907d0ffa";
     }
 }
