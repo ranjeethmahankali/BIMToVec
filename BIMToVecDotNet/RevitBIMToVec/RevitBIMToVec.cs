@@ -38,6 +38,8 @@ namespace RevitBIMToVec
             BitmapImage image = new BitmapImage(new Uri(Path.Combine(BaseDirectory,"RevitBIMToVecLogo.png")));
             btn.LargeImage = image;
 
+            RunInference.LoadIfcNameMapping();
+
             try
             {
                 RevitClient.StartPythonServer();

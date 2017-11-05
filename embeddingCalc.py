@@ -44,8 +44,9 @@ def Extrapolate(A, B, C):
 
 # this scores the belong together ness of the given collection of ifc names belong together
 def coherence(words):
-    if any([not word in WORDS for word in words]):
-        raise ValueError("Word not found")
+    for word in words:
+        if not word in WORDS:
+            raise ValueError("Word %s not found"%word)
 
     embeds = []
     for word in words:

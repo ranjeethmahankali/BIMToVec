@@ -8,9 +8,9 @@ using Autodesk.Revit.UI;
 
 namespace RevitBIMToVec
 {
-    public class SpecialToken
+    public class IncomingToken
     {
-        private static Dictionary<string, SpecialToken> _tokenDict = new Dictionary<string, SpecialToken>();
+        private static Dictionary<string, IncomingToken> _tokenDict = new Dictionary<string, IncomingToken>();
         #region-fields
         private string _name;
         private Action _bindingFunc;
@@ -24,7 +24,7 @@ namespace RevitBIMToVec
         #endregion
 
         #region-constructors
-        private SpecialToken(string name, Action func)
+        private IncomingToken(string name, Action func)
         {
             _name = name;
             _bindingFunc = func;
@@ -37,9 +37,9 @@ namespace RevitBIMToVec
         #endregion
 
         #region-functions
-        private static SpecialToken ByName(string name)
+        private static IncomingToken ByName(string name)
         {
-            SpecialToken token = null;
+            IncomingToken token = null;
             if (_tokenDict.TryGetValue(name, out token))
             {
                 return token;
@@ -49,7 +49,7 @@ namespace RevitBIMToVec
 
         public static bool MatchAndExecuteToken(string name)
         {
-            SpecialToken token = ByName(name);
+            IncomingToken token = ByName(name);
             if(token == null)
             {
                 return false;
@@ -63,7 +63,7 @@ namespace RevitBIMToVec
         #endregion
 
         #region-static members
-        private static readonly SpecialToken SERVER_ERROR = new SpecialToken(
+        private static readonly IncomingToken SERVER_ERROR = new IncomingToken(
             "error_ec995d88-ee8e-4288-a2da-3c93d231992b", () => {
                 string errorMsg = RevitClient.ListenAndReturnData();
                 TaskDialog box = new TaskDialog("Python Server Error");

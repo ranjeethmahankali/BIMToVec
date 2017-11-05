@@ -52,6 +52,7 @@ def ProcessInput(data):
 
     return "["+oddOneOut(words)+"] of \n"+ ", ".join(words)
 
+# this is the main loop
 if __name__ == "__main__":
     print("Server started...")
     while True:
