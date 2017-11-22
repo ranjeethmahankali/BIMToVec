@@ -59,8 +59,9 @@ def coherence(words):
     return avgDistances, avgDist
 
 def oddOneOut(words):
+    words = [word for word in words if word in WORDS]
     distances, avg = coherence(words)
-    return words[np.argmin(distances)]
+    return words, words[np.argmin(distances)]
         
 
 # the main program starts here

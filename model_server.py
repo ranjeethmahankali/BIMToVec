@@ -49,8 +49,10 @@ def ProcessInput(data):
 
     # for w in words:
         # print(w)
-
-    return "["+oddOneOut(words)+"] of \n"+ ", ".join(words)
+    words, oddOne = oddOneOut(words)
+    if len(words) == 0:
+        return "None"
+    return "["+oddOne+"] of \n"+ ", ".join(words)
 
 # this is the main loop
 if __name__ == "__main__":
