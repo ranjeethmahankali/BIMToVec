@@ -70,7 +70,8 @@ namespace RevitBIMToVec
                 {
                     words.Add(className);
                 }
-                var matIds = elem.GetMaterialIds(true);
+                List<ElementId> matIds = elem.GetMaterialIds(true).ToList();
+                matIds.AddRange(elem.GetMaterialIds(false).ToList());
                 foreach( var id in matIds)
                 {
                     string word = ProcessString(doc.GetElement(id).Name);
