@@ -43,16 +43,23 @@ def ProcessInput(data):
         INCOMING_TOKEN[data]()
         return
 
-    words = data.split(" ")
+    elemWords = data.split("\n")
+    words = []
+    for elem in elemWords:
+        if(len(elemWords) == 0):
+            continue
+        words.append(elem.split(" "))
+
     if len(words) == 0:
         return "None"
 
-    # for w in words:
-        # print(w)
     words, oddOne = oddOneOut(words)
     if len(words) == 0:
         return "None"
-    return "["+oddOne+"] of \n"+ ", ".join(words)
+
+    names = [[w for w in w_set if "ifc" in w] for w_set in words]
+    ifcNames = [names[i][0] if len(names[i]) == 0 else words[i][0] for i in range(len(names))]
+    return "["+ifcNames[oddOne]+"] of \n"+ ", ".join(ifcNames)
 
 # this is the main loop
 if __name__ == "__main__":

@@ -1,6 +1,12 @@
 from ops import *
 import math
+import random
+from matplotlib import pylab
+from sklearn.manifold import TSNE
 
+# instance of a tsne thing
+tsne = TSNE(perplexity=30.0, n_components=2, init="pca", n_iter=5000)
+#saved words and embeddings
 EMBEDDINGS = loadFromFile("savedEmbeddings/embeddings.pkl")
 WORDS, WORD_TO_NUM = getAllWords()
 
@@ -44,13 +50,18 @@ def Extrapolate(A, B, C):
 
 # this scores the belong together ness of the given collection of ifc names belong together
 def coherence(words):
-    for word in words:
-        if not word in WORDS:
-            raise ValueError("Word %s not found"%word)
+    for wset in words:
+        for word in wset:
+            if not word in WORDS:
+                raise ValueError("Word %s not found"%word)
 
     embeds = []
-    for word in words:
-        embeds.append(toEmbedding(word))
+    for wset in words:
+        w_embeds = []
+        for word in wset:
+            w_embeds.append(toEmbedding(word))
+        w_embeds = np.array(w_embeds)
+        embeds.append(np.mean(w_embeds, axis=0))
     
     embeds = np.array(embeds)
     cosineDist = np.matmul(embeds, np.transpose(embeds))
@@ -59,9 +70,20 @@ def coherence(words):
     return avgDistances, avgDist
 
 def oddOneOut(words):
-    words = [word for word in words if word in WORDS]
+    words = [[word for word in wset if word in WORDS] for wset in words]
     distances, avg = coherence(words)
-    return words, words[np.argmin(distances)]
+    return words, np.argmin(distances)
+
+# this displays a scatter plot of the embeddings
+def plot(embeddings, WORDS):
+    assert len(embeddings) >= len(WORDS)
+    pylab.figure(figsize=(15,15)) # 15 inches
+    for i,label in enumerate(WORDS):
+        x, y = embeddings[i,:]
+        pylab.scatter(x,y)
+        pylab.annotate(label,xy=[x,y],xytext=(5,2),textcoords='offset points',ha='right',va='bottom')
+    
+    pylab.show()
         
 
 # the main program starts here
@@ -71,9 +93,9 @@ def oddOneOut(words):
 # print(coherence(["IfcWallStandardCase", "IfcGrid"]))
 # print(coherence(["IfcWall", "IfcDoor"]))
 if __name__ == "__main__":
-    while True:
-        word = input("Enter word: ")
-        matches = nearestToWord(word,10)
-        for m in matches:
-            print(" - " +m)
+    indices = random.sample(range(len(WORDS)), 650)
+    words = [(WORDS[i] if len(WORDS[i]) < 15 else WORDS[i][:20]) for i in indices]
+    embeds = [EMBEDDINGS[i] for i in indices]
+    embeds_2d = tsne.fit_transform(embeds)
+    plot(embeds_2d, words)
     # print(Extrapolate("ifcpile", "concreteprecastconcretenormalweightksi", "ifcstair"))

@@ -60,15 +60,15 @@ namespace RevitBIMToVec
             Selection sel = uiApp.ActiveUIDocument.Selection;
             List<Reference> picked = sel.PickObjects(ObjectType.Element, "Select the objects that you want to group").ToList();
 
-            List<string> words = new List<string>();
+            List<List<string>> words = new List<List<string>>();
             foreach(var objRef in picked)
             {
                 Element elem = doc.GetElement(objRef);
                 string className;
-
-                if (_ifcNameMap.TryGetValue(elem.Category.Name, out className) && !words.Contains(className))
+                List<string> elemWords = new List<string>();
+                if (_ifcNameMap.TryGetValue(elem.Category.Name, out className) && !elemWords.Contains(className))
                 {
-                    words.Add(className);
+                    elemWords.Add(className);
                 }
                 List<ElementId> matIds = elem.GetMaterialIds(true).ToList();
                 matIds.AddRange(elem.GetMaterialIds(false).ToList());
@@ -76,11 +76,13 @@ namespace RevitBIMToVec
                 {
                     string word = ProcessString(doc.GetElement(id).Name);
                     if (word == "") { continue; }
-                    if (!words.Contains(word)) { words.Add(word); }
+                    if (!elemWords.Contains(word)) { elemWords.Add(word); }
                 }
+
+                words.Add(elemWords);
             }
 
-            string msg = String.Join(" ", words.ToArray());
+            string msg = String.Join("\n", words.Select((l) => String.Join(" ", l.ToArray())).ToArray());
             RevitClient.SendData(msg);
             string response = RevitClient.ListenAndReturnData();
 
